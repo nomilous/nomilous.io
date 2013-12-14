@@ -24,7 +24,7 @@ require('vertex')
             #
 
             if ip = opts.headers['x-real-ip']
-                if localtion = geoip.lookup ip
+                if location = geoip.lookup ip
                     console.log location
 
 
