@@ -4,6 +4,8 @@ require('vertex')
         allowRoot: true
         root: root = (opts, callback) -> 
 
+            console.log opts
+
             callback null, 
 
                 headers: 'Content-Type': 'text/html'
