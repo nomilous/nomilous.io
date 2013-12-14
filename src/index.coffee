@@ -15,7 +15,7 @@ require('vertex')
             # root as function receives all requests, 404 all but /
             #
 
-            return callback null, statusCode: 404 unless path is '/'
+            return callback null, statusCode: 404 unless opts.path is '/'
 
 
             #
