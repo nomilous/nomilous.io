@@ -1,3 +1,5 @@
+geoip = require 'geoip-lite'
+
 require('vertex')
 
     #
@@ -8,6 +10,13 @@ require('vertex')
 
         allowRoot: true
         root: root = (opts, callback) -> 
+
+            #
+            # from nginx config:
+            # proxy_set_header X-Real-IP $remote_addr;
+            #
+
+            console.log IP: opts.headers['X-Real-IP']
 
             callback null, 
 
