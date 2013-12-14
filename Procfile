@@ -1,1 +1,1 @@
-server: node lib/nomilous.js
+server: node lib/index.js
