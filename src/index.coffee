@@ -12,16 +12,27 @@ require('vertex')
         root: root = (opts, callback) -> 
 
             #
+            # root as function receives all requests, 404 all but /
+            #
+
+            return callback null, statusCode: 404 unless path is '/'
+
+
+            #
             # from nginx config:
             # proxy_set_header X-Real-IP $remote_addr;
             #
 
-            console.log IP: opts.headers['x-real-ip']
+            if ip = opts.headers['x-real-ip']
+                if localtion = geoip.lookup ip
+                    console.log location
+
 
             callback null, 
 
                 headers: 'Content-Type': 'text/html'
                 body: '<body style="background: #000000"></body>'
+
 
         listen: 
             port: process.env.WWW_PORT
