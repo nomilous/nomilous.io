@@ -16,7 +16,7 @@ require('vertex')
             # proxy_set_header X-Real-IP $remote_addr;
             #
 
-            console.log IP: opts.headers['X-Real-IP']
+            console.log IP: opts.headers['x-real-ip']
 
             callback null, 
 
