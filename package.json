@@ -6,7 +6,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "vertex": "0.0.1"
+    "vertex": "0.0.1",
+    "geoip-lite": "~1.1.1"
   },
   "devDependencies": {
     "ipso": "0.0.18"

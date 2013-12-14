@@ -12,6 +12,7 @@ require('vertex')
 
         listen: 
             port: process.env.WWW_PORT
+            hostname: 'localhost'
         
-root.$www = {}      
+root.$www = {}
 
