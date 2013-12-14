@@ -1,5 +1,9 @@
 require('vertex')
 
+    #
+    # TODO: vertex should rather export .create() function
+    #
+
     www: 
 
         allowRoot: true
@@ -13,6 +17,12 @@ require('vertex')
         listen: 
             port: process.env.WWW_PORT
             hostname: 'localhost'
+
+            #
+            # TODO: vertex should default to localhost
+            #
+
+            
         
 root.$www = {}
 
