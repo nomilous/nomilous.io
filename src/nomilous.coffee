@@ -1,10 +1,9 @@
 require('vertex')
 
     www: 
+
         allowRoot: true
         root: root = (opts, callback) -> 
-
-            console.log opts
 
             callback null, 
 
@@ -12,7 +11,7 @@ require('vertex')
                 body: '<body style="background: #000000"></body>'
 
         listen: 
-            port: 3000
+            port: process.env.WWW_PORT
         
 root.$www = {}      
 
