@@ -1,0 +1,14 @@
+{
+  "name": "nomilous.io",
+  "version": "0.0.0",
+  "description": "",
+  "main": "lib/nomilous",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "vertex": "0.0.1"
+  },
+  "devDependencies": {
+    "ipso": "0.0.18"
+  }
+}
