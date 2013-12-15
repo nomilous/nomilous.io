@@ -18,7 +18,6 @@ describe 'Database', ->
             @uri.should.equal 'mongodb://localhost/nomilous_test'
 
 
-
     it 'defines visitors collection', 
 
         ipso (Database, should) -> 
