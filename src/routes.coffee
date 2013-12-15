@@ -46,12 +46,31 @@ module.exports.build = (opts, callback) ->
         body: fs.readFileSync( __dirname + '/../build/build.js' ).toString()
 
 
+module.exports.visitors = (opts, callback) -> 
+
+    #
+    # TODO: limit to recent
+    #
+
+    database.Visitor.find().exec (err, result) -> 
+
+        callback null, result.map (v) -> 
+
+            location: 
+                country: v.location.country
+                region: v.location.region
+                city: v.location.city
+                ll: v.location.ll
+
+
+
 
 #
 # enable www function routes
 #
 
 module.exports.$www = {}
+module.exports.visitors.$www = {}
 module.exports.build.$www = cache: true
 module.exports.client.$www = cache: true
                                 #

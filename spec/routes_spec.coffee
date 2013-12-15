@@ -10,12 +10,6 @@ describe 'Routes', ->
 
         tag geoip: require 'geoip-lite'
 
-        #
-        # stub the db connect
-        #
-
-        mongoose.does _connect: ->
-
 
     context '/', ->
 
@@ -74,4 +68,42 @@ describe 'Routes', ->
 
                     result.headers.should.eql 'Content-Type':'text/javascript'
                     result.body.should.match /browser-side/
+
+
+    context '/visitors', -> 
+
+        it 'responds with json list of visitors', 
+
+            ipso (facto, Routes, Database, should) -> 
+
+                Database.Visitor = class 
+
+                    #
+                    # mock find()
+                    #
+
+                    @find = -> exec: (callback) -> 
+                        callback null, [
+                            { location: 
+                                country: 'US'
+                                region: 'CA'
+                                city: 'Mountain View'
+                                ll: [ 37.4192, -122.0574 ] }
+                        ] 
+
+                Routes.visitors {}, (err, result) -> 
+
+                    result.should.eql [
+
+                        { location: 
+
+                            country: 'US'
+                            region: 'CA'
+                            city: 'Mountain View'
+                            ll: [ 37.4192, -122.0574 ] }
+
+                    ]
+
+                    facto()
+
 
