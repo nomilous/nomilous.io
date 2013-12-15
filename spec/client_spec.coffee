@@ -8,7 +8,7 @@ describe 'Client', ->
 
         define
 
-            $xhr: -> get('xhrRequestor').request.apply null, arguments
+            xhr: -> -> get('xhrRequestor').request.apply null, arguments
             asap: -> require process.cwd() + '/components/johntron-asap/asap'
             promise: -> require process.cwd() + '/components/then-promise'
 
@@ -20,5 +20,5 @@ describe 'Client', ->
             urls = []
             xhrRequestor.does request: (opts) -> urls.push opts.url  
             Client()
-            
+
             urls.should.eql [ '/earth', '/visitors' ]
