@@ -40,7 +40,15 @@ module.exports.client = (opts, callback) ->
         """
 
 
-buildScript = fs.readFileSync( __dirname + '/../build/build.js' ).toString()
+buildScript = """
+    
+    #{fs.readFileSync( __dirname + '/../build/build.js' ).toString()}
+
+    //
+    // something is chopping the last few chars off the build script delivery
+    //
+
+"""
 
 module.exports.build = (opts, callback) -> 
 
