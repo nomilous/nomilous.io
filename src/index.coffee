@@ -1,18 +1,8 @@
-require('vertex')
-
-    #
-    # TODO: vertex should rather export .create() function
-    #
+require('vertex').create
 
     www: 
 
-        allowRoot: true
+        listen: port: process.env.WWW_PORT || 3000
         root: require './routes'
+        allowRoot: true
 
-        listen: 
-            port: process.env.WWW_PORT || 3000
-            hostname: 'localhost'
-
-            #
-            # TODO: vertex should default to localhost
-            #

@@ -18,7 +18,7 @@ module.exports = (opts, callback) ->
 
         headers: 'Content-Type': 'text/html'
         body: """
-        <body style="background: #000000">
+        <body>
             <script src="build"></script>
             <script src="client"></script>
         </body>
