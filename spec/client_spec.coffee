@@ -1,19 +1,35 @@
-{ipso, mock, define, get} = require 'ipso'
+{ipso, mock, Mock, define, get} = require 'ipso'
 
 describe 'Client', -> 
 
     before ipso -> 
 
-        #
-        # hackery to deal with module that exports 1 function
-        # ===================================================
-        # 
-        # * create injectable mock with request function
-        # * define 'xhr' node_module  
-        # 
-
         xhrRequestor = mock('xhrRequestor').with request: -> 
-        define $xhr: -> get('xhrRequestor').request.apply null, arguments
+
+        define
+
+            #
+            # define for require('xhr')
+            #
+
+            $xhr: -> get('xhrRequestor').request.apply null, arguments
+
+
+            #
+            # define for require('promise')
+            #
+
+            promise: -> class Promise
+
+                constructor: (resolver) -> 
+                    resolver(
+                        (@result) => 
+                        (@error) => 
+                    )
+                then: (onResult, onError) ->  
+                    if @error then return onError @error
+                    onResult @result
+
 
 
     it 'gets visitors list', 
@@ -21,8 +37,8 @@ describe 'Client', ->
         ipso (Client, xhrRequestor) -> 
 
             xhrRequestor.does 
-                request: (opts) -> 
+                request: (opts, onResult) -> 
                     opts.url.should.equal '/visitors'
+                    onResult status: 200, response: "[]"
 
             Client()
-
