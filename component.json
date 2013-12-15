@@ -5,8 +5,7 @@
   "version": "0.0.0",
   "keywords": [],
   "dependencies": {
-    "component/dom" : "*",
-    "cvdlab/three" : "*"
+    "matthewp/xhr": "*"
   },
   "development": {},
   "license": "MIT",

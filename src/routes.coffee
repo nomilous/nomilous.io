@@ -38,12 +38,14 @@ module.exports.client = (opts, callback) ->
         ).call(self);
         """
 
+buildScript = fs.readFileSync( __dirname + '/../build/build.js' ).toString('utf8')
+
 module.exports.build = (opts, callback) -> 
 
     callback null,
 
         headers: 'Content-Type': 'text/javascript'
-        body: fs.readFileSync( __dirname + '/../build/build.js' ).toString()
+        body: buildScript
 
 
 module.exports.visitors = (opts, callback) -> 

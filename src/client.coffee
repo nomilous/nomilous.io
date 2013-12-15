@@ -2,5 +2,10 @@ module.exports = ->
     
     ### browser-side ### 
 
-    console.log 'ok'
+    xhr = require 'xhr'
+
+    xhr 
+        url: '/visitors'
+        ({status, response}) -> console.log visitors: JSON.parse response
+        (err) -> 
 
