@@ -1,6 +1,7 @@
-fs       = require 'fs'
-geoip    = require 'geoip-lite'
-database = require './database'
+fs          = require 'fs'
+geoip       = require 'geoip-lite'
+{ShapeFile} = require 'node-shapelib-partial'
+database    = require './database'
 
 module.exports = (opts, callback) -> 
 
@@ -66,9 +67,17 @@ module.exports.visitors = (opts, callback) ->
                 ll: v.location.ll
 
 
+earth = undefined
+sf = new ShapeFile
+sf.open 'data/ne_50m_land', (err, shapes) -> earth = shapes
+
 module.exports.earth = (opts, callback) -> 
 
-    callback null, {}
+    #
+    # assumes earth is ready
+    #
+
+    callback null, earth
 
 
 

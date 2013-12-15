@@ -1,3 +1,8 @@
 #!/usr/bin/env coffee
 
 {ShapeFile} = require 'node-shapelib-partial'
+
+sf = new ShapeFile
+sf.open process.argv[2], (error, shapes) -> 
+
+    console.log shapes
