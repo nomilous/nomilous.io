@@ -1,7 +1,7 @@
 module.exports = (opts, callback) -> 
 
     #
-    # root as function receives all requests, 404 all but /
+    # root as function receives all non matched requests, 404 all but /
     #
 
     return callback null, statusCode: 404 unless opts.path is '/'
@@ -20,24 +20,34 @@ module.exports = (opts, callback) ->
     callback null, 
 
         headers: 'Content-Type': 'text/html'
-        body: '<body style="background: #000000"></body>'
+        body: """
+        <body style="background: #000000">
+            <script src="client"></script>
+        </body>
+        """
 
 
-
-#
-# TODO: vertex recursor should walk past function if next node on path is present
-#
 
 module.exports.client = (opts, callback) -> 
 
     callback null, 
 
         headers: 'Content-Type': 'text/javascript'
-        body: 'alert("okgood");'
+        body: """(
+        #{require('./client').toString()}
+        ).call(self);
+        """
 
 
 
+#
+# enable www function routes
+#
 
 module.exports.$www = {}
-module.exports.client.$www = {}
+module.exports.client.$www = cache: true
+                                #
+                                # TODO: vertex in production caches the 
+                                #       response for /client
+                                #
 
