@@ -1,0 +1,11 @@
+#!/bin/sh
+REPO=$HOME/git
+APP=$HOME/app
+mkdir -p $APP
+cd $REPO
+RELEASE="`date '+%Y-%m-%d %H:%M:%S'` `cat $1`"
+git archive $1 | tar -C $APP -x
+cd $APP
+npm install
+echo $RELEASE >> $HOME/app.release.log
+echo RELEASE: $RELEASE
