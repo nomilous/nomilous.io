@@ -2,10 +2,19 @@
 
 describe 'Routes', -> 
 
-    before ipso -> 
+    before ipso (mongoose) -> 
+
+        #
+        # injectable tag name, '-' cannot be used by ipso injector
+        #
 
         tag geoip: require 'geoip-lite'
 
+        #
+        # stub the db connect
+        #
+
+        mongoose.does connect: ->
 
 
     context '/', ->
@@ -14,8 +23,9 @@ describe 'Routes', ->
 
             ipso (Routes, geoip, should) -> 
 
-                geoip.does 
-                    _lookup: (ip) -> ip.should.equal '1.1.1.1'
+                geoip.does
+                    _lookup: (ip) -> 
+                        ip.should.equal '1.1.1.1'
 
                 Routes 
 

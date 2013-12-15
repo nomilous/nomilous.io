@@ -1,5 +1,6 @@
-geoip = require 'geoip-lite'
-fs    = require 'fs'
+fs       = require 'fs'
+geoip    = require 'geoip-lite'
+database = require './database'
 
 module.exports = (opts, callback) -> 
 
