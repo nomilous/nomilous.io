@@ -2,9 +2,30 @@ module.exports = ->
     
     ### browser-side ### 
 
+    dom      = require 'dom'
+    THREE    = require 'three'
     xhr      = require 'xhr'
     Promise  = require 'promise'
 
+
+    container = dom('body').append '<div></div>'
+
+    width     = 400
+    height    = 300
+    fov       = 45
+    aspect    = width / height
+    near      = 0.1
+    far       = 1000
+    renderer  = new THREE.WebGLRenderer
+    camera    = new THREE.PerspectiveCamera fov, aspect, near, far
+    scene     = new THREE.Scene
+
+    scene.add camera
+    camera.position.z = 300
+    renderer.setSize width, height
+    renderer.setClearColor 0x222222, 1
+
+    container.append renderer.domElement
 
     Promise.all( 
 
@@ -27,9 +48,15 @@ module.exports = ->
 
         ([earth, visitors]) -> 
 
-            console.log e: earth
-            console.log v: visitors
+            animate = ->
+
+                try requestAnimationFrame animate
+                renderer.render scene, camera
+
+            animate()
 
         (error) -> 
+
+            console.log error
 
     )

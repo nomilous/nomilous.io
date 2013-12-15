@@ -11,16 +11,29 @@ describe 'Client', ->
             xhr: -> -> get('xhrRequestor').request.apply null, arguments
             asap: -> require process.cwd() + '/components/johntron-asap/asap'
             promise: -> require process.cwd() + '/components/then-promise'
-            dom: -> (selector) -> 
-            three: -> 
+            dom: -> (selector) -> append: -> append: ->
+            three: ->
+                WebGLRenderer: Mock('WebGLRenderer').with 
+                    setSize: ->
+                    setClearColor: ->
+                PerspectiveCamera: Mock('PerspectiveCamera').with 
+                    position: z: 0
+                Scene: Mock('Scene').with 
+                    add: ->
 
 
-    it 'gets /earth and /visitors', 
+    it 'renders /earth and /visitors', 
 
-        ipso (Client, xhrRequestor) -> 
+        ipso (facto, Client, xhrRequestor, WebGLRenderer) -> 
 
             urls = []
-            xhrRequestor.does request: (opts) -> urls.push opts.url  
+            xhrRequestor.does request: (opts, onSuccess) -> 
+
+                urls.push opts.url
+                onSuccess status: 200, response: "[]"
+
+            WebGLRenderer.does render: -> facto()
+
             Client()
             urls.should.eql [ '/earth', '/visitors' ]
 
