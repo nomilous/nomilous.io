@@ -14,7 +14,7 @@ describe 'Routes', ->
         # stub the db connect
         #
 
-        mongoose.does connect: ->
+        mongoose.does _connect: ->
 
 
     context '/', ->
@@ -39,6 +39,28 @@ describe 'Routes', ->
 
                     (err, result) -> 
 
+
+        it 'saves a new Visitor record', 
+
+            ipso (facto, Routes, Database, should) -> 
+
+                Database.Visitor = class 
+
+                    constructor: ({location}) -> 
+
+                        location.should.eql
+                            range: [ 67305984, 67306239 ]
+                            country: 'US'
+                            region: 'CA'
+                            city: 'Mountain View'
+                            ll: [ 37.4192, -122.0574 ]
+
+                    save: -> facto()
+
+                Routes 
+                    headers: 'x-real-ip': '4.3.2.1'
+                    path: '/'
+                    (err, result) -> 
 
 
 

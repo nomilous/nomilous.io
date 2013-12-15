@@ -11,8 +11,9 @@ module.exports = (opts, callback) ->
     return callback null, statusCode: 404 unless opts.path is '/'
 
     if ip = opts.headers['x-real-ip']
-        if location = geoip.lookup ip
-            console.log LOCATION: location
+
+        v = new database.Visitor location: geoip.lookup ip
+        v.save -> # not waiting for save
 
 
     callback null, 
