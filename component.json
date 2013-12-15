@@ -1,0 +1,14 @@
+{
+  "name": "nomilous.io",
+  "repo": "nomilous/nomilous.io",
+  "description": "homepage",
+  "version": "0.0.0",
+  "keywords": [],
+  "dependencies": {
+    "cvdlab/three" : "*"
+  },
+  "development": {},
+  "license": "MIT",
+  "scripts": [],
+  "remotes": []
+}
