@@ -38,7 +38,8 @@ module.exports.client = (opts, callback) ->
         ).call(self);
         """
 
-buildScript = fs.readFileSync( __dirname + '/../build/build.js' ).toString('utf8')
+
+buildScript = fs.readFileSync( __dirname + '/../build/build.js' ).toString()
 
 module.exports.build = (opts, callback) -> 
 
@@ -65,6 +66,11 @@ module.exports.visitors = (opts, callback) ->
                 ll: v.location.ll
 
 
+module.exports.earth = (opts, callback) -> 
+
+    callback null, {}
+
+
 
 
 #
@@ -73,6 +79,7 @@ module.exports.visitors = (opts, callback) ->
 
 module.exports.$www = {}
 module.exports.visitors.$www = {}
+module.exports.earth.$www = {}
 module.exports.build.$www = cache: true
 module.exports.client.$www = cache: true
                                 #

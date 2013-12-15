@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "ipso": "0.0.18",
-    "should": "~2.1.1"
+    "should": "~2.1.1",
+    "node-shapelib-partial": "0.0.1"
   }
 }
