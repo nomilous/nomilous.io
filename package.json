@@ -10,6 +10,7 @@
     "geoip-lite": "~1.1.1"
   },
   "devDependencies": {
-    "ipso": "0.0.18"
+    "ipso": "0.0.18",
+    "should": "~2.1.1"
   }
 }

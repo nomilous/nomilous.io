@@ -1,8 +1,6 @@
 module.exports = -> 
-
-    #
-    # browser-side
-    #
+    
+    ### browser-side ### 
 
     console.log 'ok'
 

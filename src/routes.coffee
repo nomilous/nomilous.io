@@ -8,15 +8,9 @@ module.exports = (opts, callback) ->
 
     return callback null, statusCode: 404 unless opts.path is '/'
 
-
-    #
-    # from nginx config:
-    # proxy_set_header X-Real-IP $remote_addr;
-    #
-
     if ip = opts.headers['x-real-ip']
         if location = geoip.lookup ip
-            console.log location
+            console.log LOCATION: location
 
 
     callback null, 
