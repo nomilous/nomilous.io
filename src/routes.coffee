@@ -1,4 +1,5 @@
 geoip = require 'geoip-lite'
+fs    = require 'fs'
 
 module.exports = (opts, callback) -> 
 
@@ -18,6 +19,7 @@ module.exports = (opts, callback) ->
         headers: 'Content-Type': 'text/html'
         body: """
         <body style="background: #000000">
+            <script src="build"></script>
             <script src="client"></script>
         </body>
         """
@@ -34,6 +36,13 @@ module.exports.client = (opts, callback) ->
         ).call(self);
         """
 
+module.exports.build = (opts, callback) -> 
+
+    callback null,
+
+        headers: 'Content-Type': 'text/javascript'
+        body: fs.readFileSync( __dirname + '/../build/build.js' ).toString()
+
 
 
 #
@@ -41,9 +50,10 @@ module.exports.client = (opts, callback) ->
 #
 
 module.exports.$www = {}
+module.exports.build.$www = cache: true
 module.exports.client.$www = cache: true
                                 #
                                 # TODO: vertex in production caches the 
-                                #       response for /client
+                                #       response for /build and /client
                                 #
 
