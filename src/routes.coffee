@@ -1,3 +1,5 @@
+geoip = require 'geoip-lite'
+
 module.exports = (opts, callback) -> 
 
     #

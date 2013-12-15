@@ -1,5 +1,3 @@
-geoip = require 'geoip-lite'
-
 require('vertex')
 
     #
