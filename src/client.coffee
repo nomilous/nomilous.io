@@ -27,6 +27,35 @@ module.exports = ->
 
     container.append renderer.domElement
 
+
+
+    radianRatio = Math.PI / 180
+    radius      = 100
+    toLongitude = new THREE.Matrix4
+    toLatitude  = new THREE.Matrix4
+
+    transform = (longitude, latitude) -> 
+
+        #
+        # returns vertex [x,y,z] on sphere
+        # --------------------------------
+        # 
+        # * position vertex at lat = 0.0, long = 0.0, radius
+        # * transform position through lat and long rotation matrices
+        # 
+
+        vector = new THREE.Vector3 0.0, 0.0, radius
+
+        toLongitude.makeRotationY longitude * radianRatio
+        toLatitude.makeRotationX  -latitude * radianRatio
+
+        vector.applyMatrix4 toLatitude
+        vector.applyMatrix4 toLongitude
+        
+        return vector
+
+
+
     Promise.all( 
 
         ['/earth', '/visitors'].map (path) -> 
@@ -48,9 +77,8 @@ module.exports = ->
 
         ([earth, visitors]) -> 
 
+
             for shape in earth.shapes
-
-
 
                 material = new THREE.LineBasicMaterial color: 0xffffff
                 geometry = new THREE.Geometry
@@ -62,7 +90,7 @@ module.exports = ->
                     # polygons with lat and long as x and y (flat)
                     #
 
-                    geometry.vertices.push new THREE.Vector3 vertex[0], vertex[1], 0
+                    geometry.vertices.push transform vertex[0], vertex[1]
 
 
                 line = new THREE.Line geometry, material

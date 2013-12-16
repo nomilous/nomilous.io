@@ -22,8 +22,12 @@ describe 'Client', ->
                     add: ->
                 LineBasicMaterial: Mock('LineBasicMaterial')
                 Geometry: Mock('Geometry').with vertices:[]
-                Vector3: Mock('Vector3')
+                Vector3: Mock('Vector3').with
+                    applyMatrix4: ->
                 Line: Mock('Line')
+                Matrix4: Mock('Matrix4').with
+                    makeRotationY: ->
+                    makeRotationX: ->
 
 
 
