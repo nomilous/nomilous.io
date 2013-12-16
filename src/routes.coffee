@@ -23,8 +23,15 @@ module.exports = (opts, callback) ->
             </body>
             """
 
-    if ip = opts.headers['x-real-ip']
 
+
+    randomIP = -> 
+        random = -> Math.floor Math.random() * 254
+        "#{random()}.#{random()}.#{random()}.#{random()}"
+
+    ip = opts.headers['x-real-ip']
+    ip = randomIP() unless process.env.NODE_ENV is 'production'
+    if ip
         v = new database.Visitor location: geoip.lookup ip
         v.save -> response()
 
@@ -77,15 +84,21 @@ module.exports.visitors = (opts, callback) ->
             ll: v.location.ll
 
 
+#
+# load landmass polygons from shapefile
+# -------------------------------------
+# 
+# * reduce vertex precision to 1/10th of a degree
+# * remap to array of arrays of 2vecs
+#
+
+round = (value) -> Math.floor( value * 10 ) / 10
 earth = undefined
 sf = new ShapeFile
-sf.open 'data/ne_50m_land', (err, shapes) -> 
-
-    #
-    # map to array of arrays of 2vecs
-    #
-    
-    earth = shapes.shapes.map (p) -> p.vertices.map (v) -> v[0..1]
+sf.open 'data/ne_50m_land', (err, res) -> 
+    earth = res.shapes.map (shape) -> shape.vertices.map (v) -> 
+            [round(v[0]), round(v[1])]
+            
 
 
 module.exports.earth = (opts, callback) -> 
