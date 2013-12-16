@@ -12,16 +12,17 @@ module.exports = ->
 
     width     = 800
     height    = 800
-    fov       = 45
+    fov       = 60
     aspect    = width / height
     near      = 0.1
-    far       = 1000
+    far       = 2000
     renderer  = new THREE.WebGLRenderer
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
     scene     = new THREE.Scene
+    scene.fog = new THREE.FogExp2 0x251d15, 0.0018
 
     scene.add camera
-    camera.position.z = 300
+    camera.position.z = 650
     renderer.setSize width, height
     renderer.setClearColor 0x222222, 1
 
@@ -30,7 +31,7 @@ module.exports = ->
 
 
     radianRatio = Math.PI / 180
-    radius      = 100
+    radius      = 300
     toLongitude = new THREE.Matrix4
     toLatitude  = new THREE.Matrix4
 
@@ -111,6 +112,7 @@ module.exports = ->
                 try requestAnimationFrame animate
                 renderer.render scene, camera
                 polygon.rotation.y += 0.03 for polygon in landMasses
+                polygon.rotation.x += 0.003 for polygon in landMasses
 
 
             animate()

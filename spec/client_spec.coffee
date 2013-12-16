@@ -20,6 +20,7 @@ describe 'Client', ->
                     position: z: 0
                 Scene: Mock('Scene').with 
                     add: ->
+                ogExp2: Mock 'FogExp2'
                 LineBasicMaterial: Mock('LineBasicMaterial')
                 Geometry: Mock('Geometry').with vertices:[]
                 Vector3: Mock('Vector3').with
