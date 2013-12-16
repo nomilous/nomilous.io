@@ -30,7 +30,7 @@ module.exports = (opts, callback) ->
         "#{random()}.#{random()}.#{random()}.#{random()}"
 
     ip = opts.headers['x-real-ip']
-    ip = randomIP() unless process.env.NODE_ENV is 'production'
+    ip ||= randomIP() unless process.env.NODE_ENV is 'production'
     if ip
         v = new database.Visitor location: geoip.lookup ip
         v.save -> response()
