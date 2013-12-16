@@ -11,26 +11,24 @@ module.exports = (opts, callback) ->
 
     return callback null, statusCode: 404 unless opts.path is '/'
 
+    response = -> 
+
+        callback null, 
+
+            headers: 'Content-Type': 'text/html'
+            body: """
+            <body>
+                <script src="build"></script>
+                <script src="client"></script>
+            </body>
+            """
+
     if ip = opts.headers['x-real-ip']
 
         v = new database.Visitor location: geoip.lookup ip
-        v.save ->
+        v.save -> response()
 
-        #
-        # TODO: wait for save - otherwise new visitor's location is
-        #       not included in /visitors
-        #
-
-
-    callback null, 
-
-        headers: 'Content-Type': 'text/html'
-        body: """
-        <body>
-            <script src="build"></script>
-            <script src="client"></script>
-        </body>
-        """
+    else response()
 
 
 
