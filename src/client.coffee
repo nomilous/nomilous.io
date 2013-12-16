@@ -8,10 +8,16 @@ module.exports = ->
     Promise  = require 'promise'
 
 
-    container = dom('body').append '<div></div>'
+    container = dom('body').append('<div></div>').css
+
+        position: 'absolute'
+        width: '100%'
+        height: '100%'
+        top: '0px'
+        left: '0px'
 
     width     = 800
-    height    = 800
+    height    = 600
     fov       = 60
     aspect    = width / height
     near      = 0.1
@@ -22,12 +28,20 @@ module.exports = ->
     scene.fog = new THREE.FogExp2 0x251d15, 0.0018
 
     scene.add camera
-    camera.position.z = 650
+    camera.position.z = 750
     renderer.setSize width, height
-    renderer.setClearColor 0x222222, 1
+    #renderer.setClearColor 0x222222, 1
+    renderer.setClearColor 0x000000, 1
 
-    container.append renderer.domElement
+    canvas = renderer.domElement
+    container.append canvas
 
+    #
+    # stretch to full available size
+    #
+
+    canvas.style.width = '100%'
+    canvas.style.height = '100%'
 
 
     radianRatio = Math.PI / 180
@@ -88,13 +102,12 @@ module.exports = ->
 
             landMasses = []
 
-            for shape in earth.shapes
+            for polygon in earth
 
                 material = new THREE.LineBasicMaterial color: 0xffffff
                 geometry = new THREE.Geometry
-                vertices = shape.vertices
 
-                for vertex in vertices
+                for vertex in polygon
 
                     #
                     # polygons with lat and long as x and y (flat)
@@ -109,8 +122,33 @@ module.exports = ->
 
             animate = ->
 
+                #
+                # schedule next frame refresh
+                #
+
                 try requestAnimationFrame animate
+
+                #
+                # handle possible resize that may have ocurred
+                #
+
+                if canvas.width isnt canvas.clientWidth or canvas.height isnt canvas.clientHeight
+
+                    canvas.width = canvas.clientWidth
+                    canvas.height = canvas.clientHeight
+                    renderer.setSize canvas.width, canvas.height
+                    camera.aspect = canvas.width / canvas.height
+                    camera.updateProjectionMatrix()
+
+
+                
                 renderer.render scene, camera
+
+
+                #
+                # animate for next frame
+                #
+
                 polygon.rotation.y += 0.03 for polygon in landMasses
                 polygon.rotation.x += 0.003 for polygon in landMasses
 

@@ -77,7 +77,14 @@ module.exports.visitors = (opts, callback) ->
 
 earth = undefined
 sf = new ShapeFile
-sf.open 'data/ne_50m_land', (err, shapes) -> earth = shapes
+sf.open 'data/ne_50m_land', (err, shapes) -> 
+
+    #
+    # map to array of arrays of 2vecs
+    #
+    
+    earth = shapes.shapes.map (p) -> p.vertices.map (v) -> v[0..1]
+
 
 module.exports.earth = (opts, callback) -> 
 

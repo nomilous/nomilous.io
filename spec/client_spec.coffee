@@ -11,16 +11,17 @@ describe 'Client', ->
             xhr: -> -> get('xhrRequestor').request.apply null, arguments
             asap: -> require process.cwd() + '/components/johntron-asap/asap'
             promise: -> require process.cwd() + '/components/then-promise'
-            dom: -> (selector) -> append: -> append: ->
+            dom: -> (selector) -> append: -> css: -> append: ->
             three: ->
                 WebGLRenderer: Mock('WebGLRenderer').with 
                     setSize: ->
                     setClearColor: ->
+                    domElement: style: width: 0, height: 0
                 PerspectiveCamera: Mock('PerspectiveCamera').with 
                     position: z: 0
                 Scene: Mock('Scene').with 
                     add: ->
-                ogExp2: Mock 'FogExp2'
+                FogExp2: Mock 'FogExp2'
                 LineBasicMaterial: Mock('LineBasicMaterial')
                 Geometry: Mock('Geometry').with vertices:[]
                 Vector3: Mock('Vector3').with
