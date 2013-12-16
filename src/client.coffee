@@ -10,8 +10,8 @@ module.exports = ->
 
     container = dom('body').append '<div></div>'
 
-    width     = 500
-    height    = 300
+    width     = 800
+    height    = 800
     fov       = 45
     aspect    = width / height
     near      = 0.1
@@ -77,6 +77,15 @@ module.exports = ->
 
         ([earth, visitors]) -> 
 
+            #
+            # TODO: 
+            # 
+            # * landmass shapedata is 2.5Mb as json (tighten)
+            # * fetch in multiple parts and load each immediately 
+            #   (the page is silent till loaded)
+            #
+
+            landMasses = []
 
             for shape in earth.shapes
 
@@ -93,14 +102,16 @@ module.exports = ->
                     geometry.vertices.push transform vertex[0], vertex[1]
 
 
-                line = new THREE.Line geometry, material
-                scene.add line
+                landMasses.push polygon = new THREE.Line geometry, material
+                scene.add polygon
 
 
             animate = ->
 
                 try requestAnimationFrame animate
                 renderer.render scene, camera
+                polygon.rotation.y += 0.03 for polygon in landMasses
+
 
             animate()
 
