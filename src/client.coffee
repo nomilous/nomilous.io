@@ -7,14 +7,13 @@ module.exports = ->
     xhr      = require 'xhr'
     Promise  = require 'promise'
 
-
     container = dom('body').append('<div></div>').css
-
         position: 'absolute'
         width: '100%'
         height: '100%'
         top: '0px'
         left: '0px'
+
 
     width     = 800
     height    = 600
@@ -43,7 +42,6 @@ module.exports = ->
     canvas.style.width = '100%'
     canvas.style.height = '100%'
 
-
     radianRatio = Math.PI / 180
     radius      = 300
     toLongitude = new THREE.Matrix4
@@ -60,33 +58,23 @@ module.exports = ->
         # 
 
         vector = new THREE.Vector3 0.0, 0.0, radius
-
         toLongitude.makeRotationY longitude * radianRatio
         toLatitude.makeRotationX  -latitude * radianRatio
-
         vector.applyMatrix4 toLatitude
         vector.applyMatrix4 toLongitude
-        
         return vector
-
 
 
     Promise.all( 
 
         ['/earth', '/visitors'].map (path) -> 
-
             new Promise (resolve, reject) -> xhr
-
                 method: 'GET'
                 url: path
-
                 ({status, response}) ->
-
                     if status is 200 then return resolve JSON.parse response
                     reject new Error "#{path} error status", status
-
                 reject
-
 
     ).then(
 
@@ -95,7 +83,6 @@ module.exports = ->
             #
             # TODO: 
             # 
-            # * landmass shapedata is 2.5Mb as json (tighten)
             # * fetch in multiple parts and load each immediately 
             #   (the page is silent till loaded)
             #
@@ -106,16 +93,11 @@ module.exports = ->
             # 
 
             landMasses = []
-
             for polygon in earth
-
                 material = new THREE.LineBasicMaterial color: 0xffffff
                 geometry = new THREE.Geometry
-
                 for vertex in polygon
-
                     geometry.vertices.push transform vertex[0], vertex[1] 
-
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
 
@@ -130,17 +112,9 @@ module.exports = ->
             geometry  = new THREE.Geometry
             particles = new THREE.ParticleSystem geometry, material
             scene.add particles
-
             for {country, region, city, ll} in visitors
-
-
-                                                    #
-                                                    # long before lat?
-                                                    #
                 geometry.vertices.push transform ll[1], ll[0]
-
-            
-            
+ 
 
 
             animate = ->
@@ -156,7 +130,6 @@ module.exports = ->
                 #
 
                 if canvas.width isnt canvas.clientWidth or canvas.height isnt canvas.clientHeight
-
                     canvas.width = canvas.clientWidth
                     canvas.height = canvas.clientHeight
                     renderer.setSize canvas.width, canvas.height
@@ -164,25 +137,23 @@ module.exports = ->
                     camera.updateProjectionMatrix()
 
 
-                
                 renderer.render scene, camera
-
 
                 #
                 # animate for next frame
                 #
 
-                polygon.rotation.y += 0.03 for polygon in landMasses
-                polygon.rotation.x += 0.003 for polygon in landMasses
+                for polygon in landMasses
+                    polygon.rotation.x += 0.003 
+                    polygon.rotation.y += 0.03 
 
-                particles.rotation.y += 0.03
                 particles.rotation.x +=  0.003
+                particles.rotation.y += 0.03
 
 
             animate()
 
-        (error) -> 
 
-            console.log error
+        (error) -> console.log error
 
     )
