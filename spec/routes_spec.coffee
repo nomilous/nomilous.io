@@ -84,24 +84,24 @@ describe 'Routes', ->
 
                     @find = -> exec: (callback) -> 
                         callback null, [
-                            { location: 
-                                country: 'US'
-                                region: 'CA'
-                                city: 'Mountain View'
-                                ll: [ 37.4192, -122.0574 ] }
+                            { 
+                                location:
+                                    country: 'US'
+                                    region: 'CA'
+                                    city: 'Mountain View'
+                                    ll: [ 37.4192, -122.0574 ] 
+                            }
                         ] 
 
                 Routes.visitors {}, (err, result) -> 
 
                     result.should.eql [
-
-                        { location: 
-
+                        { 
                             country: 'US'
                             region: 'CA'
                             city: 'Mountain View'
-                            ll: [ 37.4192, -122.0574 ] }
-
+                            ll: [ 37.4192, -122.0574 ] 
+                        }
                     ]
 
                     facto()

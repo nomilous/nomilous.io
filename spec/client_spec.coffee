@@ -22,14 +22,17 @@ describe 'Client', ->
                 Scene: Mock('Scene').with 
                     add: ->
                 FogExp2: Mock 'FogExp2'
-                LineBasicMaterial: Mock('LineBasicMaterial')
                 Geometry: Mock('Geometry').with vertices:[]
+                ParticleBasicMaterial: Mock('ParticleBasicMaterial')
+                ParticleSystem: Mock 'ParticleSystem'
+                LineBasicMaterial: Mock('LineBasicMaterial')
                 Vector3: Mock('Vector3').with
                     applyMatrix4: ->
                 Line: Mock('Line')
                 Matrix4: Mock('Matrix4').with
                     makeRotationY: ->
                     makeRotationX: ->
+                Vertex: Mock 'Vertex'
 
 
 

@@ -14,7 +14,12 @@ module.exports = (opts, callback) ->
     if ip = opts.headers['x-real-ip']
 
         v = new database.Visitor location: geoip.lookup ip
-        v.save -> # not waiting for save
+        v.save ->
+
+        #
+        # TODO: wait for save - otherwise new visitor's location is
+        #       not included in /visitors
+        #
 
 
     callback null, 
@@ -68,11 +73,10 @@ module.exports.visitors = (opts, callback) ->
 
         callback null, result.map (v) -> 
 
-            location: 
-                country: v.location.country
-                region: v.location.region
-                city: v.location.city
-                ll: v.location.ll
+            country: v.location.country
+            region: v.location.region
+            city: v.location.city
+            ll: v.location.ll
 
 
 earth = undefined

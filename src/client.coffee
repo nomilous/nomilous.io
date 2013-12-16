@@ -31,7 +31,7 @@ module.exports = ->
     camera.position.z = 750
     renderer.setSize width, height
     #renderer.setClearColor 0x222222, 1
-    renderer.setClearColor 0x000000, 1
+    renderer.setClearColor 0x050505, 1
 
     canvas = renderer.domElement
     container.append canvas
@@ -100,6 +100,11 @@ module.exports = ->
             #   (the page is silent till loaded)
             #
 
+            #
+            # earth landmass polygons
+            # =======================
+            # 
+
             landMasses = []
 
             for polygon in earth
@@ -109,15 +114,33 @@ module.exports = ->
 
                 for vertex in polygon
 
-                    #
-                    # polygons with lat and long as x and y (flat)
-                    #
-
-                    geometry.vertices.push transform vertex[0], vertex[1]
-
+                    geometry.vertices.push transform vertex[0], vertex[1] 
 
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
+
+
+
+            #
+            # visitors particle system
+            # ========================
+            # 
+
+            material  = new THREE.ParticleBasicMaterial color: 0xffffff, size: 8, fog: false
+            geometry  = new THREE.Geometry
+            particles = new THREE.ParticleSystem geometry, material
+            scene.add particles
+
+            for {country, region, city, ll} in visitors
+
+
+                                                    #
+                                                    # long before lat?
+                                                    #
+                geometry.vertices.push transform ll[1], ll[0]
+
+            
+            
 
 
             animate = ->
@@ -151,6 +174,9 @@ module.exports = ->
 
                 polygon.rotation.y += 0.03 for polygon in landMasses
                 polygon.rotation.x += 0.003 for polygon in landMasses
+
+                particles.rotation.y += 0.03
+                particles.rotation.x +=  0.003
 
 
             animate()
