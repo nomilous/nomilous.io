@@ -37,6 +37,11 @@ module.exports = (opts, callback) ->
                 <script src="client?id=#{  visitor.id  }&hostname=#{ hostname }&port=#{ port }"></script>
             </body>
             """
+                                                                        #
+                                                                        # client script is ""query templated"",
+                                                                        # allows for handy post-assignment of
+                                                                        # websocket details.
+                                                                        #
 
 
 module.exports.client = (opts, callback) -> 
@@ -83,7 +88,7 @@ module.exports.build = (opts, callback) ->
     # 
     
     respond = ->
-        
+
         return setTimeout respond, 1000 unless buildScript? 
     
         callback null,
