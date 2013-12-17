@@ -1,4 +1,4 @@
-module.exports = (id) -> 
+module.exports = (id, hostname, port) -> 
     
     ### browser-side ### 
 
@@ -7,6 +7,22 @@ module.exports = (id) ->
     xhr      = require 'xhr'
     Promise  = require 'promise'
     client   = require 'vertex-client'
+
+
+    uplink = client.create
+
+        uuid: id
+        secret: 'x'
+        connect: uri: "ws://#{hostname}:#{port}"
+
+
+    uplink.connect()
+    
+    uplink.socket.on 'message', (payload) -> 
+
+        console.log received: payload
+
+
 
     container = dom('body').append('<div></div>').css
         position: 'absolute'

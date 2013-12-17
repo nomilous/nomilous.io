@@ -3,6 +3,10 @@ geoip       = require 'geoip-lite'
 {ShapeFile} = require 'node-shapelib-partial'
 database    = require './database'
 
+
+hostname = process.env.WEBSOCKET_HOSTNAME || 'localhost'
+port     = process.env.WEBSOCKET_PORT     ||  3003
+
 module.exports = (opts, callback) -> 
 
     #
@@ -18,6 +22,7 @@ module.exports = (opts, callback) ->
     ip = opts.headers['x-real-ip']
     ip ||= randomIP() unless process.env.NODE_ENV is 'production'
     v = new database.Visitor location: geoip.lookup ip
+
     v.save (err, visitor)-> 
 
         if err? then return callback null, 'error'
@@ -28,21 +33,23 @@ module.exports = (opts, callback) ->
             body: """
             <body>
                 <script src="build"></script>
-                <script src="client?id=#{visitor._id}"></script>
+                <script src="client?id=#{  visitor.id  }&hostname=#{ hostname }&port=#{ port }"></script>
             </body>
             """
 
 
 module.exports.client = (opts, callback) -> 
 
-    id = opts.query.id
+    id       = opts.query.id
+    hostname = opts.query.hostname
+    port     = opts.query.port
 
     callback null, 
 
         headers: 'Content-Type': 'text/javascript'
         body: """(
         #{require('./client').toString()}
-        ).call(self, '#{id}');
+        ).call(self, '#{id}', '#{hostname}', #{port});
         """
 
 

@@ -64,27 +64,40 @@ describe 'Routes', ->
 
             ipso (Routes, should) -> 
 
-                Routes.client {}, (err, result) -> 
+                Routes.client 
 
-                    result.headers.should.eql 'Content-Type':'text/javascript'
-                    result.body.should.match /browser-side/
+                    #
+                    # inbound query contains id and assigned uplink hostname (websocket) 
+                    # as templated in / html script tag
+                    #
+
+                    query: 
+                        id: 'visitor_id'
+                        hostname: 'uplink.hostname'
+                        # port: 'uplink.port'
+
+                    (err, result) -> 
+
+                        result.headers.should.eql 'Content-Type':'text/javascript'
+                        result.body.should.match /browser-side/
 
 
     context '/visitors', -> 
 
-        it 'responds with json list of visitors', 
+        it 'responds with json list of visitors and flags "me" for visitors own record', 
 
             ipso (facto, Routes, Database, should) -> 
 
                 Database.Visitor = class 
 
                     #
-                    # mock find()
+                    # mock mongoose find()
                     #
 
                     @find = -> exec: (callback) -> 
                         callback null, [
                             { 
+                                id: 'visitor_id'
                                 location:
                                     country: 'US'
                                     region: 'CA'
@@ -93,17 +106,26 @@ describe 'Routes', ->
                             }
                         ] 
 
-                Routes.visitors {}, (err, result) -> 
+                Routes.visitors 
 
-                    result.should.eql [
-                        { 
-                            country: 'US'
-                            region: 'CA'
-                            city: 'Mountain View'
-                            ll: [ 37.4192, -122.0574 ] 
-                        }
-                    ]
+                    #
+                    # inbound query contains id as templated in / html script tag
+                    #
 
-                    facto()
+                    query: id: 'visitor_id'
+
+                    (err, result) -> 
+
+                        result.should.eql [
+                            { 
+                                me: true
+                                country: 'US'
+                                region: 'CA'
+                                city: 'Mountain View'
+                                ll: [ 37.4192, -122.0574 ] 
+                            }
+                        ]
+
+                        facto()
 
 

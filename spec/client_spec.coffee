@@ -32,8 +32,12 @@ describe 'Client', ->
                 Matrix4: Mock('Matrix4').with
                     makeRotationY: ->
                     makeRotationX: ->
-                Vertex: Mock 'Vertex'
+                Vertex: Mock('Vertex')
 
+            'vertex-client': -> mock('vertexClient').with 
+                create: -> 
+                    connect: ->
+                    socket: on: ->
 
 
     it 'renders /earth and /visitors', 
@@ -66,4 +70,24 @@ describe 'Client', ->
 
             Client 'visitor_id'
             urls.should.eql [ '/earth?id=visitor_id', '/visitors?id=visitor_id' ]
+
+
+    it 'creates vertex client socket connection', 
+
+        ipso (facto, Client, vertexClient) -> 
+
+            vertexClient.does 
+
+                _create: (opts) -> 
+                
+                    opts.should.eql 
+
+                        uuid: 'visitor_id'
+                        secret: 'x'
+                        connect: uri: 'ws://uplink.hostname:uplink.port'
+
+                    facto()
+
+            Client 'visitor_id', 'uplink.hostname', 'uplink.port'
+            
 
