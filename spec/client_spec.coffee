@@ -49,6 +49,7 @@ describe 'Client', ->
                     uniforms: 
                         h: value: 0
                         v: value: 0
+                        r: value: 0
                 EffectComposer: Mock('EffectComposer').with
                     setSize: ->
                     addPass: ->

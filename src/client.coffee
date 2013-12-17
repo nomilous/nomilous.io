@@ -38,6 +38,7 @@ module.exports = (id, hostname, port) ->
     aspect    = width / height
     near      = 0.1
     far       = 2000
+    bluriness = 5
     renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
     scene     = new THREE.Scene
@@ -157,6 +158,8 @@ module.exports = (id, hostname, port) ->
                     camera.updateProjectionMatrix()
                     renderer.setSize canvas.width, canvas.height         
                     composer.setSize canvas.width, canvas.height
+                    hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
+                    vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
                     
 
                 renderer.initWebGLObjects scene
@@ -202,9 +205,19 @@ module.exports = (id, hostname, port) ->
             lastPass    = new THREE.ShaderPass THREE.CopyShader
             composer    = new THREE.EffectComposer renderer, renderTarget
 
-            bluriness = 10
+            #
+            # * tiltshift perfoms post render vertical and horizontal fragment shader 
+            #   passes to achieve a gausian blur effect 
+            #   (excluding a narrow configured horizontal band)
+            # 
+            # * parameters h and v (propotional to the canvas) specify blur amount
+            # * parameter r is used to set the vertical location of the horizontal 
+            #   band that remains in focus
+            #
+
             hblur.uniforms[ 'h' ].value = bluriness / canvas.width
             vblur.uniforms[ 'v' ].value = bluriness / canvas.height
+            hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
 
             composer.addPass renderModel
             composer.addPass hblur
