@@ -6,7 +6,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "vertex": "0.0.3",
+    "vertex": "0.0.4",
     "geoip-lite": "~1.1.1",
     "mongoose": "~3.8.2"
   },
