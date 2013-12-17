@@ -3,7 +3,7 @@ module.exports = (id, hostname, port) ->
     ### browser-side ### 
 
     dom      = require 'dom'
-    THREE    = require 'three'
+    THREE    = require 'three'; require 'three-postprocessing'
     xhr      = require 'xhr'
     Promise  = require 'promise'
     client   = require 'vertex-client'
@@ -38,7 +38,7 @@ module.exports = (id, hostname, port) ->
     aspect    = width / height
     near      = 0.1
     far       = 2000
-    renderer  = new THREE.WebGLRenderer
+    renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
     scene     = new THREE.Scene
     scene.fog = new THREE.FogExp2 0x251d15, 0.0018
@@ -102,6 +102,10 @@ module.exports = (id, hostname, port) ->
             # 
             # * fetch in multiple parts and load each immediately 
             #   (the page is silent till loaded)
+            # 
+            # * create opt-in cdn for model data
+            #       * model uuid, title, version
+            #       * use builtin browser db when available / update per version
             #
 
             #
@@ -149,21 +153,20 @@ module.exports = (id, hostname, port) ->
                 if canvas.width isnt canvas.clientWidth or canvas.height isnt canvas.clientHeight
                     canvas.width = canvas.clientWidth
                     canvas.height = canvas.clientHeight
-                    renderer.setSize canvas.width, canvas.height
                     camera.aspect = canvas.width / canvas.height
                     camera.updateProjectionMatrix()
+                    renderer.setSize canvas.width, canvas.height         
+                    composer.setSize canvas.width, canvas.height
+                    
 
+                renderer.initWebGLObjects scene
+                renderer.autoClear = false
+                renderer.shadowMapEnabled = true
+                renderer.autoUpdateObjects = true
+                #renderer.clearTarget null
+                composer.render() 
 
-
-
-                # renderModel = new THREE.RenderPass scene, camera
-
-                # console.log renderModel
-
-
-
-
-                renderer.render scene, camera
+            
 
                 #
                 # animate for next frame
@@ -176,6 +179,27 @@ module.exports = (id, hostname, port) ->
                 particles.rotation.x +=  0.003
                 particles.rotation.y += 0.03
 
+
+
+            #
+            # multiple pass render
+            # --------------------
+            # 
+            # * get a bit too heavy on fullscreen (?when antialias enable?)
+            #
+            
+            renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
+                minFilter: THREE.LinearFilter
+                magFilter: THREE.LinearFilter
+                format: THREE.RGBFormat
+                stencilBuffer: false
+
+            renderModel = new THREE.RenderPass scene, camera
+            lastPass    = new THREE.ShaderPass THREE.CopyShader
+            composer    = new THREE.EffectComposer renderer, renderTarget
+            composer.addPass renderModel
+            composer.addPass lastPass
+            lastPass.renderToScreen = true
 
             animate()
 

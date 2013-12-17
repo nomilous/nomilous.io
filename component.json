@@ -9,7 +9,8 @@
     "matthewp/xhr": "*",
     "cvdlab/three": "*",
     "component/dom": "*",
-    "nomilous/vertex-client": "develop"
+    "nomilous/vertex-client": "develop",
+    "nomilous/three-postprocessing": "*"
   },
   "development": {},
   "license": "MIT",

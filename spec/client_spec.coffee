@@ -16,9 +16,12 @@ describe 'Client', ->
                 WebGLRenderer: Mock('WebGLRenderer').with 
                     setSize: ->
                     setClearColor: ->
+                    initWebGLObjects: ->
+                    clearTarget: ->
                     domElement: style: width: 0, height: 0
                 PerspectiveCamera: Mock('PerspectiveCamera').with 
                     position: z: 0
+                    updateProjectionMatrix: ->
                 Scene: Mock('Scene').with 
                     add: ->
                 FogExp2: Mock 'FogExp2'
@@ -34,15 +37,32 @@ describe 'Client', ->
                     makeRotationX: ->
                 Vertex: Mock('Vertex')
 
+                #
+                # bits from postprocessing
+                #
+
+                WebGLRenderTarget: class
+                CopyShader: class
+                RenderPass: class
+                ShaderPass: Mock('ShaderPass').with 
+                    renderToScreen: true
+                EffectComposer: Mock('EffectComposer').with
+                    setSize: ->
+                    addPass: ->
+                    render: ->
+
             'vertex-client': -> mock('vertexClient').with 
                 create: -> 
                     connect: ->
                     socket: on: ->
 
+            'three-postprocessing': -> 
 
-    it 'renders /earth and /visitors', 
 
-        ipso (facto, Client, xhrRequestor, WebGLRenderer) -> 
+    it.only 'renders /earth and /visitors', 
+
+        #ipso (facto, Client, xhrRequestor, WebGLRenderer) -> 
+        ipso (facto, Client, xhrRequestor, EffectComposer) -> 
 
             urls = []
             xhrRequestor.does request: (opts, onSuccess) -> 
@@ -66,7 +86,8 @@ describe 'Client', ->
                         status: 200
                         response: "[]"
 
-            WebGLRenderer.does render: -> facto()
+            #WebGLRenderer.does render: -> facto()
+            EffectComposer.does render: -> facto()
 
             Client 'visitor_id'
             urls.should.eql [ '/earth?id=visitor_id', '/visitors?id=visitor_id' ]
