@@ -36,7 +36,6 @@ describe 'Client', ->
 
 
 
-
     it 'renders /earth and /visitors', 
 
         ipso (facto, Client, xhrRequestor, WebGLRenderer) -> 
@@ -48,45 +47,23 @@ describe 'Client', ->
 
                 switch opts.url 
 
-                    when '/earth' then onSuccess 
+                    when '/earth?id=visitor_id' then onSuccess 
 
                         status: 200
-                        response: JSON.stringify
+                        response: JSON.stringify [
 
-                            count: 1420,
-                            type: 5,
-                            minBound: [ -180, -89.99892578125002, 0, 0 ],
-                            maxBound: [ 180, 83.599609375, 0, 0 ],
-                            shapes: [
-                                {      
-                                    id: 0
-                                    type: 5
-                                    partCount: 1
-                                    vertexCount: 2
-                                    vertices:[
-                                        [179.99921875,-16.168554687500006,0,0],
-                                        [179.84824218750003,-16.30166015625001,0,0]
-                                    ]
-                                },
-                                {
-                                    id: 2
-                                    type: 5
-                                    partCount: 1
-                                    vertexCount: 2
-                                    vertices:[
-                                        [179.99921875,-16.168554687500006,0,0],
-                                        [179.84824218750003,-16.30166015625001,0,0]
-                                    ]
-                                }
-                            ]
+                            [[-180, -89.99892578125002], [180, 83.599609375]]
+                            [[179.99921875,-16.168554687500006],[179.84824218750003,-16.30166015625001]]
 
-                    when '/visitors' then onSuccess 
+                        ]
+
+                    when '/visitors?id=visitor_id' then onSuccess 
 
                         status: 200
                         response: "[]"
 
             WebGLRenderer.does render: -> facto()
 
-            Client()
-            urls.should.eql [ '/earth', '/visitors' ]
+            Client 'visitor_id'
+            urls.should.eql [ '/earth?id=visitor_id', '/visitors?id=visitor_id' ]
 

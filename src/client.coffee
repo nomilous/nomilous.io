@@ -6,6 +6,7 @@ module.exports = (id) ->
     THREE    = require 'three'
     xhr      = require 'xhr'
     Promise  = require 'promise'
+    client   = require 'vertex-client'
 
     container = dom('body').append('<div></div>').css
         position: 'absolute'
