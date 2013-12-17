@@ -8,7 +8,8 @@
   "dependencies": {
     "vertex": "0.0.4",
     "geoip-lite": "~1.1.1",
-    "mongoose": "~3.8.2"
+    "mongoose": "~3.8.2",
+    "minify": "~0.2.3"
   },
   "devDependencies": {
     "ipso": "0.0.18",

@@ -2,6 +2,7 @@ fs          = require 'fs'
 geoip       = require 'geoip-lite'
 {ShapeFile} = require 'node-shapelib-partial'
 database    = require './database'
+minify      = require 'minify'
 
 
 hostname = process.env.WEBSOCKET_HOSTNAME || 'localhost'
@@ -53,22 +54,44 @@ module.exports.client = (opts, callback) ->
         """
 
 
-buildScript = """
-    
-    #{fs.readFileSync( __dirname + '/../build/build.js' ).toString()}
 
-    //
-    // something is chopping the last few chars off the build script delivery
-    //
+buildScript = undefined
 
-"""
+if process.env.NODE_ENV is 'production'
+
+    minify.optimize __dirname + '/../build/build.js',
+    callback: (data) -> buildScript = data
+
+else
+
+    buildScript = """
+        #{fs.readFileSync( __dirname + '/../build/build.js' ).toString()}
+        //
+        // TODO: fix something (is chopping the last few chars off the build script delivery)
+        //
+    """
 
 module.exports.build = (opts, callback) -> 
 
-    callback null,
-
-        headers: 'Content-Type': 'text/javascript'
-        body: buildScript
+    # 
+    # first hit might not have build minifi finished
+    # ----------------------------------------------
+    # 
+    # * Appears that minify holds the flow for it's entire operation
+    # * So this does not get called till afterwards
+    # * Leaving it here just incase
+    # 
+    
+    respond = ->
+        
+        return setTimeout respond, 1000 unless buildScript? 
+    
+        callback null,
+    
+            headers: 'Content-Type': 'text/javascript'
+            body: buildScript
+    
+    respond()
 
 
 module.exports.visitors = (opts, callback) -> 

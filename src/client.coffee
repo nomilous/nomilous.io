@@ -9,18 +9,18 @@ module.exports = (id, hostname, port) ->
     client   = require 'vertex-client'
 
 
-    uplink = client.create
+    # uplink = client.create
 
-        uuid: id
-        secret: 'x'
-        connect: uri: "ws://#{hostname}:#{port}"
+    #     uuid: id
+    #     secret: 'x'
+    #     connect: uri: "ws://#{hostname}:#{port}"
 
 
-    uplink.connect()
-    
-    uplink.socket.on 'message', (payload) -> 
+    # uplink.connect()
 
-        console.log received: payload
+    # uplink.socket.on 'message', (payload) -> 
+
+    #     console.log received: payload
 
 
 
@@ -152,6 +152,15 @@ module.exports = (id, hostname, port) ->
                     renderer.setSize canvas.width, canvas.height
                     camera.aspect = canvas.width / canvas.height
                     camera.updateProjectionMatrix()
+
+
+
+
+                # renderModel = new THREE.RenderPass scene, camera
+
+                # console.log renderModel
+
+
 
 
                 renderer.render scene, camera
