@@ -158,8 +158,8 @@ module.exports = (id, hostname, port) ->
                     camera.updateProjectionMatrix()
                     renderer.setSize canvas.width, canvas.height         
                     composer.setSize canvas.width, canvas.height
-                    hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
-                    vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
+                    # hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
+                    # vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
                     
 
                 renderer.initWebGLObjects scene
@@ -167,7 +167,7 @@ module.exports = (id, hostname, port) ->
                 renderer.shadowMapEnabled = true
                 renderer.autoUpdateObjects = true
                 #renderer.clearTarget null
-                composer.render() 
+                composer.render 0.1
 
             
 
@@ -191,40 +191,54 @@ module.exports = (id, hostname, port) ->
             # * get a bit too heavy on fullscreen (?when antialias enable?)
             #
             
-            renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
-                minFilter: THREE.LinearFilter
-                magFilter: THREE.LinearFilter
-                format: THREE.RGBFormat
-                stencilBuffer: false
+            # renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
+            #     minFilter: THREE.LinearFilter
+            #     magFilter: THREE.LinearFilter
+            #     format: THREE.RGBFormat
+            #     stencilBuffer: false
 
+            # material_depth = new THREE.MeshDepthMaterial
 
 
             renderModel = new THREE.RenderPass scene, camera
-            hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
-            vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
-            lastPass    = new THREE.ShaderPass THREE.CopyShader
-            composer    = new THREE.EffectComposer renderer, renderTarget
+            bokehPass   = new THREE.BokehPass scene, camera,
+                    focus: 1.0
+                    aperture: 0.025
+                    maxblur: 1.0
+                    width: canvas.width
+                    height: canvas.height
 
-            #
-            # * tiltshift perfoms post render vertical and horizontal fragment shader 
-            #   passes to achieve a gausian blur effect 
-            #   (excluding a narrow configured horizontal band)
-            # 
-            # * parameters h and v (propotional to the canvas) specify blur amount
-            # * parameter r is used to set the vertical location of the horizontal 
-            #   band that remains in focus
-            #
+            bokehPass.renderToScreen = true
 
-            hblur.uniforms[ 'h' ].value = bluriness / canvas.width
-            vblur.uniforms[ 'v' ].value = bluriness / canvas.height
-            hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
+            # hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
+            # vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
+            # lastPass    = new THREE.ShaderPass THREE.CopyShader
+            # lastPass.renderToScreen = true
+
+            composer    = new THREE.EffectComposer renderer #, renderTarget
+
+            # #
+            # # * tiltshift perfoms post render vertical and horizontal fragment shader 
+            # #   passes to achieve a gausian blur effect 
+            # #   (excluding a narrow configured horizontal band)
+            # # 
+            # # * parameters h and v (propotional to the canvas) specify blur amount
+            # # * parameter r is used to set the vertical location of the horizontal 
+            # #   band that remains in focus
+            # #
+
+            # hblur.uniforms[ 'h' ].value = bluriness / canvas.width
+            # vblur.uniforms[ 'v' ].value = bluriness / canvas.height
+            # hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
 
             composer.addPass renderModel
-            composer.addPass hblur
-            composer.addPass vblur
+            composer.addPass bokehPass
+            # composer.addPass hblur
+            # composer.addPass vblur
+            # composer.addPass lastPass
+            
 
-            composer.addPass lastPass
-            lastPass.renderToScreen = true
+            
 
             animate()
 
