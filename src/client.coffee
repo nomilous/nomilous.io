@@ -1,4 +1,4 @@
-module.exports = -> 
+module.exports = (id) -> 
     
     ### browser-side ### 
 
@@ -70,7 +70,7 @@ module.exports = ->
         ['/earth', '/visitors'].map (path) -> 
             new Promise (resolve, reject) -> xhr
                 method: 'GET'
-                url: path
+                url: path + "?id=#{id}"
                 ({status, response}) ->
                     if status is 200 then return resolve JSON.parse response
                     reject new Error "#{path} error status", status
@@ -101,8 +101,6 @@ module.exports = ->
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
 
-
-
             #
             # visitors particle system
             # ========================
@@ -112,7 +110,9 @@ module.exports = ->
             geometry  = new THREE.Geometry
             particles = new THREE.ParticleSystem geometry, material
             scene.add particles
-            for {country, region, city, ll} in visitors
+            for {country, region, city, ll, me} in visitors
+
+                if me then console.log city, region, country, ll
                 geometry.vertices.push transform ll[1], ll[0]
  
 

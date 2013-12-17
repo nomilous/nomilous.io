@@ -11,7 +11,16 @@ module.exports = (opts, callback) ->
 
     return callback null, statusCode: 404 unless opts.path is '/'
 
-    response = -> 
+    randomIP = -> 
+        random = -> Math.floor Math.random() * 254
+        "#{random()}.#{random()}.#{random()}.#{random()}"
+
+    ip = opts.headers['x-real-ip']
+    ip ||= randomIP() unless process.env.NODE_ENV is 'production'
+    v = new database.Visitor location: geoip.lookup ip
+    v.save (err, visitor)-> 
+
+        if err? then return callback null, 'error'
 
         callback null, 
 
@@ -19,34 +28,21 @@ module.exports = (opts, callback) ->
             body: """
             <body>
                 <script src="build"></script>
-                <script src="client"></script>
+                <script src="client?id=#{visitor._id}"></script>
             </body>
             """
 
 
-
-    randomIP = -> 
-        random = -> Math.floor Math.random() * 254
-        "#{random()}.#{random()}.#{random()}.#{random()}"
-
-    ip = opts.headers['x-real-ip']
-    ip ||= randomIP() unless process.env.NODE_ENV is 'production'
-    if ip
-        v = new database.Visitor location: geoip.lookup ip
-        v.save -> response()
-
-    else response()
-
-
-
 module.exports.client = (opts, callback) -> 
+
+    id = opts.query.id
 
     callback null, 
 
         headers: 'Content-Type': 'text/javascript'
         body: """(
         #{require('./client').toString()}
-        ).call(self);
+        ).call(self, '#{id}');
         """
 
 
@@ -70,6 +66,8 @@ module.exports.build = (opts, callback) ->
 
 module.exports.visitors = (opts, callback) -> 
 
+    id = opts.query.id
+
     #
     # TODO: limit to recent
     #
@@ -78,6 +76,7 @@ module.exports.visitors = (opts, callback) ->
 
         callback null, result.map (v) -> 
 
+            me: id == v.id
             country: v.location.country
             region: v.location.region
             city: v.location.city
@@ -96,8 +95,13 @@ round = (value) -> Math.floor( value * 10 ) / 10
 earth = undefined
 sf = new ShapeFile
 sf.open 'data/ne_50m_land', (err, res) -> 
-    earth = res.shapes.map (shape) -> shape.vertices.map (v) -> 
-            [round(v[0]), round(v[1])]
+    earth = res.shapes.map (shape) -> 
+        shape.vertices.map (vertex) -> 
+            lat = round vertex[0]
+            lon = round vertex[1]
+            [lat, lon]
+
+    
             
 
 
