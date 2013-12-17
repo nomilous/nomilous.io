@@ -46,10 +46,16 @@ describe 'Client', ->
                 RenderPass: class
                 ShaderPass: Mock('ShaderPass').with 
                     renderToScreen: true
+                    uniforms: 
+                        h: value: 0
+                        v: value: 0
                 EffectComposer: Mock('EffectComposer').with
                     setSize: ->
                     addPass: ->
                     render: ->
+                HorizontalTiltShiftShader: class
+                VerticalTiltShiftShader: class
+                    
 
             'vertex-client': -> mock('vertexClient').with 
                 create: -> 
@@ -59,7 +65,7 @@ describe 'Client', ->
             'three-postprocessing': -> 
 
 
-    it.only 'renders /earth and /visitors', 
+    it 'renders /earth and /visitors', 
 
         #ipso (facto, Client, xhrRequestor, WebGLRenderer) -> 
         ipso (facto, Client, xhrRequestor, EffectComposer) -> 
@@ -93,7 +99,7 @@ describe 'Client', ->
             urls.should.eql [ '/earth?id=visitor_id', '/visitors?id=visitor_id' ]
 
 
-    it 'creates vertex client socket connection', 
+    xit 'creates vertex client socket connection', 
 
         ipso (facto, Client, vertexClient) -> 
 

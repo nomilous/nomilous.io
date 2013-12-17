@@ -194,10 +194,22 @@ module.exports = (id, hostname, port) ->
                 format: THREE.RGBFormat
                 stencilBuffer: false
 
+
+
             renderModel = new THREE.RenderPass scene, camera
+            hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
+            vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
             lastPass    = new THREE.ShaderPass THREE.CopyShader
             composer    = new THREE.EffectComposer renderer, renderTarget
+
+            bluriness = 10
+            hblur.uniforms[ 'h' ].value = bluriness / canvas.width
+            vblur.uniforms[ 'v' ].value = bluriness / canvas.height
+
             composer.addPass renderModel
+            composer.addPass hblur
+            composer.addPass vblur
+
             composer.addPass lastPass
             lastPass.renderToScreen = true
 
