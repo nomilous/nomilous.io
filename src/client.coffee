@@ -170,8 +170,8 @@ module.exports = (id, hostname, port) ->
                     camera.updateProjectionMatrix()
                     renderer.setSize canvas.width, canvas.height         
                     composer.setSize canvas.width, canvas.height
-                    hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
-                    vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
+                    # hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
+                    # vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
                     
 
                 renderer.initWebGLObjects scene
@@ -207,40 +207,44 @@ module.exports = (id, hostname, port) ->
             # * get a bit too heavy on fullscreen (?when antialias enable?)
             #
             
-            renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
-                minFilter: THREE.LinearFilter
-                magFilter: THREE.LinearFilter
-                format: THREE.RGBFormat
-                stencilBuffer: false
+            # renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
+            #     minFilter: THREE.LinearFilter
+            #     magFilter: THREE.LinearFilter
+            #     format: THREE.RGBFormat
+            #     stencilBuffer: false
 
             
             renderModel = new THREE.RenderPass scene, camera
 
-
-            hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
-            vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
+            kaleido     = new THREE.ShaderPass THREE.KaleidoShader 
+            # hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
+            # vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
             lastPass    = new THREE.ShaderPass THREE.CopyShader
             lastPass.renderToScreen = true
 
             composer    = new THREE.EffectComposer renderer #, renderTarget
 
-            #
-            # * tiltshift perfoms post render vertical and horizontal fragment shader 
-            #   passes to achieve a gausian blur effect 
-            #   (excluding a narrow configured horizontal band)
-            # 
-            # * parameters h and v (propotional to the canvas) specify blur amount
-            # * parameter r is used to set the vertical location of the horizontal 
-            #   band that remains in focus
-            #
+            kaleido.uniforms.sides.value = 1
+            kaleido.uniforms.angle.value = - Math.PI / 2
 
-            hblur.uniforms[ 'h' ].value = bluriness / canvas.width
-            vblur.uniforms[ 'v' ].value = bluriness / canvas.height
-            hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
+            # #
+            # # * tiltshift perfoms post render vertical and horizontal fragment shader 
+            # #   passes to achieve a gausian blur effect 
+            # #   (excluding a narrow configured horizontal band)
+            # # 
+            # # * parameters h and v (propotional to the canvas) specify blur amount
+            # # * parameter r is used to set the vertical location of the horizontal 
+            # #   band that remains in focus
+            # #
+
+            # hblur.uniforms[ 'h' ].value = bluriness / canvas.width
+            # vblur.uniforms[ 'v' ].value = bluriness / canvas.height
+            # hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
 
             composer.addPass renderModel
-            composer.addPass hblur
-            composer.addPass vblur
+            composer.addPass kaleido
+            # composer.addPass hblur
+            # composer.addPass vblur
             composer.addPass lastPass
             
             animate()
