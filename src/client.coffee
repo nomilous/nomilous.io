@@ -36,31 +36,16 @@ module.exports = (id, hostname, port) ->
     height    = 600
     fov       = 60
     aspect    = width / height
-    # near      = 0.1
-    # far       = 2000
-    bluriness = 5
+    near      = 0.1
+    far       = 2000
+    bluriness = 1
     renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
     scene     = new THREE.Scene
+    camera   = new THREE.PerspectiveCamera fov, aspect, near, far
     
+    scene.add camera
+    camera.position.z = 750
 
-
-
-    #
-    # render in two passes to simulate depth of field
-    # -----------------------------------------------
-    # 
-    # * multiple cams slice viewport frustum (zclips, near and far)
-    # * nearCam, forground, sharp
-    # * farCam, background, blurred
-    #
-
-    nearCam   = new THREE.PerspectiveCamera fov, aspect, 0.1, 2000
-    #farCam    = new THREE.PerspectiveCamera fov, aspect, 750, 2000
-    
-    scene.add nearCam
-    nearCam.position.z = 750
-    # scene.add farCam
-    # farCam.position.z = 750
 
     scene.fog = new THREE.FogExp2 0x251d15, 0.0018  # fog seems to start from nearClip (odd)
 
@@ -137,7 +122,15 @@ module.exports = (id, hostname, port) ->
             for polygon in earth
                 material = new THREE.LineBasicMaterial color: 0xffffff
                 geometry = new THREE.Geometry
+                i = 0
                 for vertex in polygon
+
+                    #
+                    # draw line from every 4th vertex only
+                    # TODO: move this to server side if it stays
+                    #
+
+                    continue unless i++ % 4 is 0
                     geometry.vertices.push transform vertex[0], vertex[1] 
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
@@ -173,14 +166,12 @@ module.exports = (id, hostname, port) ->
                 if canvas.width isnt canvas.clientWidth or canvas.height isnt canvas.clientHeight
                     canvas.width = canvas.clientWidth
                     canvas.height = canvas.clientHeight
-                    nearCam.aspect = canvas.width / canvas.height
-                    nearCam.updateProjectionMatrix()
-                    # farCam.aspect = canvas.width / canvas.height
-                    # farCam.updateProjectionMatrix()
+                    camera.aspect = canvas.width / canvas.height
+                    camera.updateProjectionMatrix()
                     renderer.setSize canvas.width, canvas.height         
-                    # composer.setSize canvas.width, canvas.height
-                    # hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
-                    # vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
+                    composer.setSize canvas.width, canvas.height
+                    hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
+                    vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
                     
 
                 renderer.initWebGLObjects scene
@@ -190,8 +181,8 @@ module.exports = (id, hostname, port) ->
                 #renderer.clearTarget null
                 
                 # renderer.render scene, farCam
-                renderer.render scene, nearCam
-                # composer.render 0.1  # farCam
+                # renderer.render scene, nearCam
+                composer.render 0.1 
 
 
             
@@ -209,55 +200,49 @@ module.exports = (id, hostname, port) ->
 
 
 
-            # #
-            # # multiple pass render
-            # # --------------------
-            # # 
-            # # * get a bit too heavy on fullscreen (?when antialias enable?)
-            # #
+            #
+            # multiple pass render
+            # --------------------
+            # 
+            # * get a bit too heavy on fullscreen (?when antialias enable?)
+            #
             
-            # renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
-            #     minFilter: THREE.LinearFilter
-            #     magFilter: THREE.LinearFilter
-            #     format: THREE.RGBFormat
-            #     stencilBuffer: false
-
-            # material_depth = new THREE.MeshDepthMaterial
-
+            renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
+                minFilter: THREE.LinearFilter
+                magFilter: THREE.LinearFilter
+                format: THREE.RGBFormat
+                stencilBuffer: false
 
             
-            # renderModel = new THREE.RenderPass scene, farCam
+            renderModel = new THREE.RenderPass scene, camera
 
 
-            # # hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
-            # # vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
-            # lastPass    = new THREE.ShaderPass THREE.CopyShader
-            # lastPass.renderToScreen = true
+            hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
+            vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
+            lastPass    = new THREE.ShaderPass THREE.CopyShader
+            lastPass.renderToScreen = true
 
-            # composer    = new THREE.EffectComposer renderer #, renderTarget
+            composer    = new THREE.EffectComposer renderer #, renderTarget
 
-            # # #
-            # # # * tiltshift perfoms post render vertical and horizontal fragment shader 
-            # # #   passes to achieve a gausian blur effect 
-            # # #   (excluding a narrow configured horizontal band)
-            # # # 
-            # # # * parameters h and v (propotional to the canvas) specify blur amount
-            # # # * parameter r is used to set the vertical location of the horizontal 
-            # # #   band that remains in focus
-            # # #
+            #
+            # * tiltshift perfoms post render vertical and horizontal fragment shader 
+            #   passes to achieve a gausian blur effect 
+            #   (excluding a narrow configured horizontal band)
+            # 
+            # * parameters h and v (propotional to the canvas) specify blur amount
+            # * parameter r is used to set the vertical location of the horizontal 
+            #   band that remains in focus
+            #
 
-            # # hblur.uniforms[ 'h' ].value = bluriness / canvas.width
-            # # vblur.uniforms[ 'v' ].value = bluriness / canvas.height
-            # # hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
+            hblur.uniforms[ 'h' ].value = bluriness / canvas.width
+            vblur.uniforms[ 'v' ].value = bluriness / canvas.height
+            hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
 
-            # composer.addPass renderModel
-            # # composer.addPass hblur
-            # # composer.addPass vblur
-            # composer.addPass lastPass
+            composer.addPass renderModel
+            composer.addPass hblur
+            composer.addPass vblur
+            composer.addPass lastPass
             
-
-            
-
             animate()
 
 
