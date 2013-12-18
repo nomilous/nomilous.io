@@ -39,8 +39,8 @@ module.exports = (id, hostname, port) ->
     near      = 0.1
     far       = 2000
     bluriness = 1
-    rotationX = 0.003
-    rotationY = 0.03
+    rotationX = 0.0005
+    rotationY = 0.005
     renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
     scene     = new THREE.Scene
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
@@ -179,7 +179,7 @@ module.exports = (id, hostname, port) ->
                 person.elem.css top: "#{y}px", left: "#{x}px"
 
 
-            material  = new THREE.ParticleBasicMaterial color: 0xffffff, size: 8, fog: false
+            material  = new THREE.ParticleBasicMaterial color: 0xaaaaaa, size: 4, fog: false
             geometry  = new THREE.Geometry
             particles = new THREE.ParticleSystem geometry, material
             projector = new THREE.Projector
@@ -196,7 +196,7 @@ module.exports = (id, hostname, port) ->
                     labelGeom.vertices.push position.clone().multiplyScalar 1.3
                     scene.add labelLine = new THREE.Line labelGeom, labelMat
 
-                    text = "#{city}, #{region}, #{country}"
+                    text = "#{city}, #{country}"
                     elem = container.append("<div>#{text}</div>").css
                             color: '#cccccc'
                             'font-size': 'xx-small'
