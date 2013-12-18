@@ -39,6 +39,8 @@ module.exports = (id, hostname, port) ->
     near      = 0.1
     far       = 2000
     bluriness = 1
+    rotationX = 0.007
+    rotationY = 0.07
     renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
     scene     = new THREE.Scene
     camera   = new THREE.PerspectiveCamera fov, aspect, near, far
@@ -193,11 +195,11 @@ module.exports = (id, hostname, port) ->
                 #
 
                 for polygon in landMasses
-                    polygon.rotation.x += 0.003 
-                    polygon.rotation.y += 0.03 
+                    polygon.rotation.x += rotationX
+                    polygon.rotation.y += rotationY
 
-                particles.rotation.x +=  0.003
-                particles.rotation.y += 0.03
+                particles.rotation.x +=  rotationX
+                particles.rotation.y += rotationY
 
 
 
