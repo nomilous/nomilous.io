@@ -34,23 +34,23 @@ module.exports = (id, hostname, port) ->
 
     width     = 800
     height    = 600
-    fov       = 60
+    fov       = 65
     aspect    = width / height
     near      = 0.1
     far       = 2000
     bluriness = 1
-    rotationX = 0.007
-    rotationY = 0.07
+    rotationX = 0.003
+    rotationY = 0.03
     renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
     scene     = new THREE.Scene
-    camera   = new THREE.PerspectiveCamera fov, aspect, near, far
+    camera    = new THREE.PerspectiveCamera fov, aspect, near, far
     
     scene.add camera
     camera.position.z = 750
 
 
-    #scene.fog = new THREE.FogExp2 0x251d15, 0.0018
-    scene.fog = new THREE.FogExp2 0x251d15, 0.0013
+    scene.fog = new THREE.FogExp2 0x251d15, 0.0018
+    #scene.fog = new THREE.FogExp2 0x251d15, 0.0013
 
 
     renderer.setSize width, height
@@ -143,14 +143,27 @@ module.exports = (id, hostname, port) ->
             # ========================
             # 
 
+            persons   = []
             material  = new THREE.ParticleBasicMaterial color: 0xffffff, size: 8, fog: false
             geometry  = new THREE.Geometry
             particles = new THREE.ParticleSystem geometry, material
             scene.add particles
             for {country, region, city, ll, me} in visitors
 
-                if me then console.log city, region, country, ll
-                geometry.vertices.push transform ll[1], ll[0]
+                position = transform ll[1], ll[0]
+
+                if true # if me 
+
+                    labelGeom = new THREE.Geometry
+                    labelMat  = new THREE.LineBasicMaterial color: 0xffffff
+                    labelGeom.vertices.push position
+                    labelGeom.vertices.push position.clone().multiplyScalar 1.3
+                    scene.add labelLine = new THREE.Line labelGeom, labelMat
+                    
+                    persons.push person = 
+                        line: labelLine
+
+                geometry.vertices.push position
  
 
 
@@ -201,6 +214,10 @@ module.exports = (id, hostname, port) ->
                 particles.rotation.x +=  rotationX
                 particles.rotation.y += rotationY
 
+                for person in persons
+                    person.line.rotation.x += rotationX
+                    person.line.rotation.y += rotationY
+
 
 
             #
@@ -219,7 +236,7 @@ module.exports = (id, hostname, port) ->
             
             renderModel = new THREE.RenderPass scene, camera
 
-            kaleido     = new THREE.ShaderPass THREE.KaleidoShader 
+            # kaleido     = new THREE.ShaderPass THREE.KaleidoShader 
             # hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
             # vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
             lastPass    = new THREE.ShaderPass THREE.CopyShader
@@ -227,8 +244,8 @@ module.exports = (id, hostname, port) ->
 
             composer    = new THREE.EffectComposer renderer #, renderTarget
 
-            kaleido.uniforms.sides.value = 1
-            kaleido.uniforms.angle.value = - Math.PI / 2
+            # kaleido.uniforms.sides.value = 1
+            # kaleido.uniforms.angle.value = - Math.PI / 2
 
             # #
             # # * tiltshift perfoms post render vertical and horizontal fragment shader 
@@ -245,7 +262,7 @@ module.exports = (id, hostname, port) ->
             # hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
 
             composer.addPass renderModel
-            composer.addPass kaleido
+            # composer.addPass kaleido
             # composer.addPass hblur
             # composer.addPass vblur
             composer.addPass lastPass
