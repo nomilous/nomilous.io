@@ -130,6 +130,7 @@ round = (value) -> Math.floor( value * 10 ) / 10
 earth = undefined
 sf = new ShapeFile
 sf.open 'data/ne_50m_land', (err, res) -> 
+# sf.open 'data/ne_110m_land', (err, res) -> 
     earth = res.shapes.map (shape) -> 
         shape.vertices.map (vertex) -> 
             lat = round vertex[0]
