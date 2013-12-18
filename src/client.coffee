@@ -143,10 +143,46 @@ module.exports = (id, hostname, port) ->
             # ========================
             # 
 
-            persons   = []
+            persons = []
+            updateLocation = (person) -> 
+
+                #
+                # update location of the visitors dom label
+                # -----------------------------------------
+                # 
+                # * line.matrixWorld contains the transforms applied to the line
+                # 
+                # * use it to transform a clone of the vertex at the outer end
+                #   of the label line to current "world" location
+                # 
+
+                vertex = person.line.geometry.vertices[1].clone()
+                vertex.applyMatrix4 person.line.matrixWorld
+
+                #
+                # * project 3d vertex into 2d screen coords
+                #
+
+                projector.projectVector vertex, camera
+                x = (vertex.x + 1)/2 * canvas.width
+                y = -(vertex.y - 1)/2 * canvas.height
+
+
+                #
+                # * adjust label into new position
+                #
+
+                adjustHeight = 10
+                adjustWidth  = person.text.length * 2
+                x -= adjustWidth
+                y -= adjustHeight
+                person.elem.css top: "#{y}px", left: "#{x}px"
+
+
             material  = new THREE.ParticleBasicMaterial color: 0xffffff, size: 8, fog: false
             geometry  = new THREE.Geometry
             particles = new THREE.ParticleSystem geometry, material
+            projector = new THREE.Projector
             scene.add particles
             for {country, region, city, ll, me} in visitors
 
@@ -159,9 +195,20 @@ module.exports = (id, hostname, port) ->
                     labelGeom.vertices.push position
                     labelGeom.vertices.push position.clone().multiplyScalar 1.3
                     scene.add labelLine = new THREE.Line labelGeom, labelMat
-                    
-                    persons.push person = 
+
+                    text = "#{city}, #{region}, #{country}"
+                    elem = container.append("<div>#{text}</div>").css
+                            color: '#cccccc'
+                            'font-size': 'xx-small'
+                            position: 'absolute'
+                            top: '0px'
+                            left: '0px'
+
+                    persons.push
+                        text: text
+                        elem: elem
                         line: labelLine
+
 
                 geometry.vertices.push position
  
@@ -217,6 +264,7 @@ module.exports = (id, hostname, port) ->
                 for person in persons
                     person.line.rotation.x += rotationX
                     person.line.rotation.y += rotationY
+                    updateLocation person
 
 
 
