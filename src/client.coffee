@@ -47,7 +47,8 @@ module.exports = (id, hostname, port) ->
     camera.position.z = 750
 
 
-    scene.fog = new THREE.FogExp2 0x251d15, 0.0018  # fog seems to start from nearClip (odd)
+    #scene.fog = new THREE.FogExp2 0x251d15, 0.0018
+    scene.fog = new THREE.FogExp2 0x251d15, 0.0013
 
 
     renderer.setSize width, height
@@ -174,11 +175,11 @@ module.exports = (id, hostname, port) ->
                     # vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
                     
 
-                renderer.initWebGLObjects scene
-                renderer.autoClear = false
-                renderer.shadowMapEnabled = true
-                renderer.autoUpdateObjects = true
-                #renderer.clearTarget null
+                # renderer.initWebGLObjects scene
+                # renderer.autoClear = false
+                # renderer.shadowMapEnabled = true
+                # renderer.autoUpdateObjects = true
+                # renderer.clearTarget null
                 
                 # renderer.render scene, farCam
                 # renderer.render scene, nearCam
