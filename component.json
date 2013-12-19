@@ -8,7 +8,9 @@
     "then/promise": "*",
     "matthewp/xhr": "*",
     "component/dom": "*",
-    "nomilous/three-webgl-renderer": "*"
+    "nomilous/three-webgl-renderer": "*",
+    "nomilous/three-camera": "*",
+    "nomilous/three-scene": "*"
   },
   "development": {},
   "license": "MIT",

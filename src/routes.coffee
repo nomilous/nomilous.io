@@ -34,7 +34,8 @@ module.exports = (opts, callback) ->
             body: """
             <body>
                 <script src="build"></script>
-                <script src="client?id=#{  visitor.id  }&hostname=#{ hostname }&port=#{ port }"></script>
+                <!-- script src="client?id=#{  visitor.id  }&hostname=#{ hostname }&port=#{ port }"></script -->
+                <script src="client"></script>
             </body>
             """
                                                                         #

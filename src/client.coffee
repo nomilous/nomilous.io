@@ -3,7 +3,7 @@ module.exports = (id, hostname, port) ->
     ### browser-side ### 
 
     dom      = require 'dom'
-    THREE    = require 'three-webgl-renderer'
+    THREE    = require 'three-webgl-renderer'; require 'three-camera', require 'three-scene'
     xhr      = require 'xhr'
     Promise  = require 'promise'
 
@@ -26,8 +26,10 @@ module.exports = (id, hostname, port) ->
     rotationX = 0.0005
     rotationY = 0.005
     renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
-    scene     = new THREE.Scene
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
+    scene     = new THREE.Scene
+
+    
     
     scene.add camera
     camera.position.z = 750
@@ -41,8 +43,12 @@ module.exports = (id, hostname, port) ->
     #renderer.setClearColor 0x222222, 1
     renderer.setClearColor 0x050505, 1
 
+
+
     canvas = renderer.domElement
     container.append canvas
+
+
 
     #
     # stretch to full available size
@@ -55,6 +61,10 @@ module.exports = (id, hostname, port) ->
     radius      = 300
     toLongitude = new THREE.Matrix4
     toLatitude  = new THREE.Matrix4
+
+    renderer.render scene, camera
+
+    return
 
     transform = (longitude, latitude) -> 
 
