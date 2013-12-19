@@ -74,6 +74,8 @@ else
         //
         // TODO: fix something (is chopping the last few chars off the build script delivery)
         //
+
+        
     """
 
 module.exports.build = (opts, callback) -> 

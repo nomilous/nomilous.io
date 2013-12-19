@@ -7,10 +7,8 @@
   "dependencies": {
     "then/promise": "*",
     "matthewp/xhr": "*",
-    "cvdlab/three": "*",
     "component/dom": "*",
-    "nomilous/vertex-client": "develop",
-    "nomilous/three-postprocessing": "*"
+    "nomilous/three-webgl-renderer": "*"
   },
   "development": {},
   "license": "MIT",

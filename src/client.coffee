@@ -3,25 +3,9 @@ module.exports = (id, hostname, port) ->
     ### browser-side ### 
 
     dom      = require 'dom'
-    THREE    = require 'three'; require 'three-postprocessing'
+    THREE    = require 'three-webgl-renderer'
     xhr      = require 'xhr'
     Promise  = require 'promise'
-    client   = require 'vertex-client'
-
-
-    # uplink = client.create
-
-    #     uuid: id
-    #     secret: 'x'
-    #     connect: uri: "ws://#{hostname}:#{port}"
-
-
-    # uplink.connect()
-
-    # uplink.socket.on 'message', (payload) -> 
-
-    #     console.log received: payload
-
 
 
     container = dom('body').append('<div></div>').css
@@ -232,7 +216,7 @@ module.exports = (id, hostname, port) ->
                     camera.aspect = canvas.width / canvas.height
                     camera.updateProjectionMatrix()
                     renderer.setSize canvas.width, canvas.height         
-                    composer.setSize canvas.width, canvas.height
+                    # composer.setSize canvas.width, canvas.height
                     # hblur.uniforms[ 'h' ].value = bluriness / canvas.width;
                     # vblur.uniforms[ 'v' ].value = bluriness / canvas.height;
                     
@@ -243,9 +227,9 @@ module.exports = (id, hostname, port) ->
                 # renderer.autoUpdateObjects = true
                 # renderer.clearTarget null
                 
-                # renderer.render scene, farCam
+                renderer.render scene, camera
                 # renderer.render scene, nearCam
-                composer.render 0.1 
+                # composer.render 0.1 
 
 
             
@@ -267,53 +251,52 @@ module.exports = (id, hostname, port) ->
                     updateLocation person
 
 
-
-            #
-            # multiple pass render
-            # --------------------
-            # 
-            # * get a bit too heavy on fullscreen (?when antialias enable?)
-            #
-            
-            # renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
-            #     minFilter: THREE.LinearFilter
-            #     magFilter: THREE.LinearFilter
-            #     format: THREE.RGBFormat
-            #     stencilBuffer: false
-
-            
-            renderModel = new THREE.RenderPass scene, camera
-
-            # kaleido     = new THREE.ShaderPass THREE.KaleidoShader 
-            # hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
-            # vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
-            lastPass    = new THREE.ShaderPass THREE.CopyShader
-            lastPass.renderToScreen = true
-
-            composer    = new THREE.EffectComposer renderer #, renderTarget
-
-            # kaleido.uniforms.sides.value = 1
-            # kaleido.uniforms.angle.value = - Math.PI / 2
-
             # #
-            # # * tiltshift perfoms post render vertical and horizontal fragment shader 
-            # #   passes to achieve a gausian blur effect 
-            # #   (excluding a narrow configured horizontal band)
+            # # multiple pass render
+            # # --------------------
             # # 
-            # # * parameters h and v (propotional to the canvas) specify blur amount
-            # # * parameter r is used to set the vertical location of the horizontal 
-            # #   band that remains in focus
+            # # * get a bit too heavy on fullscreen (?when antialias enable?)
             # #
+            
+            # # renderTarget = new THREE.WebGLRenderTarget canvas.width, canvas.height,
+            # #     minFilter: THREE.LinearFilter
+            # #     magFilter: THREE.LinearFilter
+            # #     format: THREE.RGBFormat
+            # #     stencilBuffer: false
 
-            # hblur.uniforms[ 'h' ].value = bluriness / canvas.width
-            # vblur.uniforms[ 'v' ].value = bluriness / canvas.height
-            # hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
+            
+            # renderModel = new THREE.RenderPass scene, camera
 
-            composer.addPass renderModel
-            # composer.addPass kaleido
-            # composer.addPass hblur
-            # composer.addPass vblur
-            composer.addPass lastPass
+            # # kaleido     = new THREE.ShaderPass THREE.KaleidoShader 
+            # # hblur       = new THREE.ShaderPass THREE.HorizontalTiltShiftShader
+            # # vblur       = new THREE.ShaderPass THREE.VerticalTiltShiftShader
+            # lastPass    = new THREE.ShaderPass THREE.CopyShader
+            # lastPass.renderToScreen = true
+
+            # composer    = new THREE.EffectComposer renderer #, renderTarget
+
+            # # kaleido.uniforms.sides.value = 1
+            # # kaleido.uniforms.angle.value = - Math.PI / 2
+
+            # # #
+            # # # * tiltshift perfoms post render vertical and horizontal fragment shader 
+            # # #   passes to achieve a gausian blur effect 
+            # # #   (excluding a narrow configured horizontal band)
+            # # # 
+            # # # * parameters h and v (propotional to the canvas) specify blur amount
+            # # # * parameter r is used to set the vertical location of the horizontal 
+            # # #   band that remains in focus
+            # # #
+
+            # # hblur.uniforms[ 'h' ].value = bluriness / canvas.width
+            # # vblur.uniforms[ 'v' ].value = bluriness / canvas.height
+            # # hblur.uniforms[ 'r' ].value = vblur.uniforms[ 'r' ].value = 0.6
+
+            # composer.addPass renderModel
+            # # composer.addPass kaleido
+            # # composer.addPass hblur
+            # # composer.addPass vblur
+            # composer.addPass lastPass
             
             animate()
 
