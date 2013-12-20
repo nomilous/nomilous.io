@@ -31,7 +31,7 @@ module.exports = (id, hostname, port) ->
     bluriness = 1
     rotationX = 0.0005
     rotationY = 0.005
-    renderer  = new THREE.WebGLRenderer antialias: false, alpha: false
+    renderer  = new THREE.WebGLRenderer antialias: true, alpha: false
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
     scene     = new THREE.Scene
 
@@ -129,7 +129,7 @@ module.exports = (id, hostname, port) ->
                     # # TODO: move this to server side if it stays
                     # #
                     # continue unless i++ % 4 is 0
-                    
+
                     geometry.vertices.push transform vertex[0], vertex[1] 
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
