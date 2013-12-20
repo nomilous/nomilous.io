@@ -6,8 +6,9 @@ module.exports = (id, hostname, port) ->
     require 'three-camera'
     require 'three-scene'
     require 'three-line'
+    require 'three-particle'
 
-    THREE    = require 'three' # all the above accumulated onto this instance 
+    THREE    = require 'three' # all the above accumulated onto this instance
     dom      = require 'dom'
     xhr      = require 'xhr'
     Promise  = require 'promise'
@@ -120,15 +121,15 @@ module.exports = (id, hostname, port) ->
             for polygon in earth # [0..1]
                 material = new THREE.LineBasicMaterial color: 0xffffff
                 geometry = new THREE.Geometry
-                i = 0
+                # i = 0
                 for vertex in polygon
 
-                    #
-                    # draw line from every 4th vertex only
-                    # TODO: move this to server side if it stays
-                    #
-
-                    continue unless i++ % 4 is 0
+                    # #
+                    # # draw line from every 4th vertex only
+                    # # TODO: move this to server side if it stays
+                    # #
+                    # continue unless i++ % 4 is 0
+                    
                     geometry.vertices.push transform vertex[0], vertex[1] 
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
@@ -140,10 +141,6 @@ module.exports = (id, hostname, port) ->
                 camera.aspect = canvas.width / canvas.height
                 camera.updateProjectionMatrix()
                 renderer.setSize canvas.width, canvas.height      
-            
-
-            renderer.render scene, camera
-            return
 
 
             #

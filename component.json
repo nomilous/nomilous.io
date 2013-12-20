@@ -12,6 +12,7 @@
     "nomilous/three-camera": "*",
     "nomilous/three-scene": "*",
     "nomilous/three-line": "*",
+    "nomilous/three-particle": "*",
     "nomilous/three": "*"
   },
   "development": {},
