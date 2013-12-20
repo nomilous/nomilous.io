@@ -13,6 +13,7 @@
     "nomilous/three-scene": "0.0.1",
     "nomilous/three-line": "0.0.1",
     "nomilous/three-particle": "0.0.1",
+    "nomilous/three-stats": "*",
     "nomilous/three": "0.0.1"
   },
   "development": {},

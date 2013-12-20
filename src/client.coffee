@@ -8,10 +8,17 @@ module.exports = (id, hostname, port) ->
     require 'three-line'
     require 'three-particle'
 
-    THREE    = require 'three' # all the above accumulated onto this instance
+    THREE    = require 'three'
     dom      = require 'dom'
     xhr      = require 'xhr'
     Promise  = require 'promise'
+
+    Stats    = require('three-stats')
+    stats    = new Stats
+    stats.setMode 0
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
 
 
     container = dom('body').append('<div></div>').css
@@ -20,6 +27,8 @@ module.exports = (id, hostname, port) ->
         height: '100%'
         top: '0px'
         left: '0px'
+
+    container.append stats.domElement
 
 
     width     = 800
@@ -221,6 +230,8 @@ module.exports = (id, hostname, port) ->
 
             animate = ->
 
+                stats.begin()
+
                 #
                 # schedule next frame refresh
                 #
@@ -270,6 +281,9 @@ module.exports = (id, hostname, port) ->
                     person.line.rotation.x += rotationX
                     person.line.rotation.y += rotationY
                     updateLocation person
+
+
+                stats.end()
 
 
             # #
