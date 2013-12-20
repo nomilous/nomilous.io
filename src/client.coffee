@@ -2,8 +2,13 @@ module.exports = (id, hostname, port) ->
     
     ### browser-side ### 
 
+    require 'three-webgl-renderer'
+    require 'three-camera'
+    require 'three-scene'
+    require 'three-line'
+
+    THREE    = require 'three' # all the above accumulated onto this instance 
     dom      = require 'dom'
-    THREE    = require 'three-webgl-renderer'; require 'three-camera', require 'three-scene'
     xhr      = require 'xhr'
     Promise  = require 'promise'
 
@@ -62,10 +67,6 @@ module.exports = (id, hostname, port) ->
     toLongitude = new THREE.Matrix4
     toLatitude  = new THREE.Matrix4
 
-    renderer.render scene, camera
-
-    return
-
     transform = (longitude, latitude) -> 
 
         #
@@ -116,7 +117,7 @@ module.exports = (id, hostname, port) ->
             # 
 
             landMasses = []
-            for polygon in earth
+            for polygon in earth # [0..1]
                 material = new THREE.LineBasicMaterial color: 0xffffff
                 geometry = new THREE.Geometry
                 i = 0
@@ -131,6 +132,19 @@ module.exports = (id, hostname, port) ->
                     geometry.vertices.push transform vertex[0], vertex[1] 
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
+
+
+            if canvas.width isnt canvas.clientWidth or canvas.height isnt canvas.clientHeight
+                canvas.width = canvas.clientWidth
+                canvas.height = canvas.clientHeight
+                camera.aspect = canvas.width / canvas.height
+                camera.updateProjectionMatrix()
+                renderer.setSize canvas.width, canvas.height      
+            
+
+            renderer.render scene, camera
+            return
+
 
             #
             # visitors particle system

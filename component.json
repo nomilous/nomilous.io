@@ -10,7 +10,9 @@
     "component/dom": "*",
     "nomilous/three-webgl-renderer": "*",
     "nomilous/three-camera": "*",
-    "nomilous/three-scene": "*"
+    "nomilous/three-scene": "*",
+    "nomilous/three-line": "*",
+    "nomilous/three": "*"
   },
   "development": {},
   "license": "MIT",
