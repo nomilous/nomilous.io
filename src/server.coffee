@@ -1,13 +1,8 @@
-require('vertex').create
+express = require 'express'
+app = express()
 
-    www: 
-        listen: port: process.env.WWW_PORT || 3000
-        root: require './routes'
-        allowRoot: true
+app.set 'view engine', 'jade'
 
-    secret: 'x'
-    listen: 
-        hostname: process.env.WEBSOCKET_HOSTNAME || 'localhost'
-        port: process.env.WEBSOCKET_PORT || 3003
+app.get '/', (req, res) -> res.render 'index'
 
-
+app.listen 3000, 'localhost'
