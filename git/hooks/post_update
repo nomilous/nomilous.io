@@ -7,7 +7,5 @@ RELEASE="`date '+%Y-%m-%d %H:%M:%S'` `cat $1`"
 git archive $1 | tar -C $APP -x
 cd $APP
 npm install
-component install
-component build
 echo $RELEASE >> $HOME/app.release.log
 echo RELEASE: $RELEASE
