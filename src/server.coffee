@@ -12,7 +12,7 @@ app = express()
 
 app.use cookieParser()
 
-app.use session store: new RedisStore(), secret: 'keyboard cat'
+app.use session store: new RedisStore(), secret: 'aeNg6yes'
 
 app.set 'view engine', 'jade'
 
