@@ -1,3 +1,25 @@
 body {
     margin: 0px;
+    background: #FF0505;
+    color: grey;
+}
+
+.progress-bar {
+    width: 302px;
+    margin-top: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.progress-frame {
+    border: 1px solid grey;
+    margin-top: 5px;
+    height: 10px;
+    width: 300px;
+}
+
+.progress {
+    background: grey;
+    width: 0px;
+    height: 100%;
 }

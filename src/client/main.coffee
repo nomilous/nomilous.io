@@ -6,7 +6,6 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
     stats.domElement.style.position = 'absolute'
     stats.domElement.style.left = '0px'
     stats.domElement.style.top = '0px'
-    document.body.appendChild stats.domElement
 
     width     = 800
     height    = 600
@@ -26,11 +25,15 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
     renderer.setClearColor 0x050505, 1
 
     canvas = renderer.domElement
-    document.body.appendChild canvas
 
     canvas.style.width = '100%'
     canvas.style.height = '100%'
+    canvas.style.position = 'absolute'
+    canvas.style.left = '0px'
+    canvas.style.top = '0px'
 
+    progress = items: []
+    progressBarLength = 300
 
     getResource = (url) ->
 
@@ -47,7 +50,7 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
 
             req.onprogress = (event) ->
                 if event.lengthComputable
-                    notify progress: [event.loaded, event.total]
+                    notify [event.loaded, event.total]
 
             req.onreadystatechange = (event) ->
                 if req.readyState == 4
@@ -63,17 +66,33 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
 
     ).then(
 
-        ([earth, visitors]) -> console.log visitors
+        ([earth, visitors]) ->
+
+            # document.body.appendChild stats.domElement
+            # document.body.appendChild canvas
+
+            animate = ->
+
+                stats.begin()
+                try requestAnimationFrame animate
+                stats.end()
+
+            animate()
+
         (error) ->
         (notify) ->
+
+            progress.items[notify.index] = notify.value
+            progress.total = 0
+            progress.done = 0
+            for item in progress.items
+                continue unless item?
+                progress.total += item[1]
+                progress.done += item[0]
+
+            doneLength = progressBarLength * progress.done / progress.total
+            document.getElementById('progress').style.width = doneLength + 'px'
+
     )
-        
 
-    animate = ->
-
-        stats.begin()
-        try requestAnimationFrame animate
-        stats.end()
-
-    animate()
     
