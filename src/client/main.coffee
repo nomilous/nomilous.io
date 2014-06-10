@@ -70,6 +70,10 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
 
         ([earth, visitors]) ->
 
+            document.body.appendChild canvas
+            document.body.appendChild stats.domElement
+            
+
             radianRatio = Math.PI / 180
             radius      = 300
             toLongitude = new THREE.Matrix4
@@ -111,6 +115,81 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
                 landMasses.push polygon = new THREE.Line geometry, material
                 scene.add polygon
 
+
+
+            persons = []
+            updateLocation = (person) -> 
+
+                #
+                # update location of the visitors dom label
+                # -----------------------------------------
+                # 
+                # * line.matrixWorld contains the transforms applied to the line
+                # 
+                # * use it to transform a clone of the vertex at the outer end
+                #   of the label line to current "world" location
+                # 
+
+                vertex = person.line.geometry.vertices[1].clone()
+                vertex.applyMatrix4 person.line.matrixWorld
+
+                #
+                # * project 3d vertex into 2d screen coords
+                #
+
+                projector.projectVector vertex, camera
+                x = (vertex.x + 1)/2 * window.innerWidth # canvas.width
+                y = -(vertex.y - 1)/2 * window.innerHeight # canvas.height
+
+
+                #
+                # * adjust label into new position
+                #
+
+                adjustHeight = 10
+                adjustWidth  = person.text.length * 2
+                x -= adjustWidth
+                y -= adjustHeight
+                person.elem.style.top = "#{y}px"
+                person.elem.style.left = "#{x}px"
+
+
+            material  = new THREE.ParticleBasicMaterial color: 0xaaaaaa, size: 4, fog: false
+            geometry  = new THREE.Geometry
+            particles = new THREE.ParticleSystem geometry, material
+            projector = new THREE.Projector
+            scene.add particles
+            for {country, region, city, ll, me} in visitors
+
+                position = transform ll[1], ll[0]
+
+                if true # if me 
+
+                    labelGeom = new THREE.Geometry
+                    labelMat  = new THREE.LineBasicMaterial color: 0xffffff
+                    labelGeom.vertices.push position
+                    labelGeom.vertices.push position.clone().multiplyScalar 1.3
+                    scene.add labelLine = new THREE.Line labelGeom, labelMat
+
+                    text = "#{city}, #{country}"
+                    elem = document.createElement 'div'
+                    elem.innerHTML = text
+                    document.body.appendChild elem
+                    elem.style.position = 'absolute'
+                    elem.style.color = '#cccccc'
+                    elem.style['font-size'] = 'xx-small'
+                    elem.style.top = '0px'
+                    elem.style.left = '0px'
+
+                    persons.push
+                        line: labelLine
+                        text: text
+                        elem: elem
+
+
+                geometry.vertices.push position
+
+
             onResize = ->
 
                 canvas.width = window.innerWidth
@@ -118,9 +197,6 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
                 camera.aspect = canvas.width / canvas.height
                 camera.updateProjectionMatrix()
                 renderer.setSize canvas.width, canvas.height
-            
-            document.body.appendChild canvas
-            document.body.appendChild stats.domElement
 
             onResize()
 
@@ -137,6 +213,14 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
                 for polygon in landMasses
                     polygon.rotation.x += rotationX
                     polygon.rotation.y += rotationY
+
+                particles.rotation.x +=  rotationX
+                particles.rotation.y += rotationY
+
+                for person in persons
+                    person.line.rotation.x += rotationX
+                    person.line.rotation.y += rotationY
+                    updateLocation person
 
                 stats.end()
 
