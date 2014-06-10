@@ -71,7 +71,7 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
         ([earth, visitors]) ->
 
             document.body.appendChild canvas
-            document.body.appendChild stats.domElement
+            # document.body.appendChild stats.domElement
             
 
             radianRatio = Math.PI / 180
@@ -164,7 +164,6 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
                 position = transform ll[1], ll[0]
 
                 if true # if me 
-
                     labelGeom = new THREE.Geometry
                     labelMat  = new THREE.LineBasicMaterial color: 0xffffff
                     labelGeom.vertices.push position
@@ -180,6 +179,10 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
                     elem.style['font-size'] = 'xx-small'
                     elem.style.top = '0px'
                     elem.style.left = '0px'
+
+                    # if me
+                    #     elem.style.color = 'white'
+                    #     elem.style['font-size'] = 'small'
 
                     persons.push
                         line: labelLine
