@@ -13,6 +13,8 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
     aspect    = width / height
     near      = 0.1
     far       = 2000
+    rotationX = 0.0005
+    rotationY = 0.005
     renderer  = new THREE.WebGLRenderer antialias: true, alpha: false
     camera    = new THREE.PerspectiveCamera fov, aspect, near, far
     scene     = new THREE.Scene
@@ -68,18 +70,82 @@ require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
 
         ([earth, visitors]) ->
 
-            # document.body.appendChild stats.domElement
-            # document.body.appendChild canvas
+            radianRatio = Math.PI / 180
+            radius      = 300
+            toLongitude = new THREE.Matrix4
+            toLatitude  = new THREE.Matrix4
+
+            transform = (longitude, latitude) -> 
+
+                #
+                # returns vertex [x,y,z] on sphere
+                # --------------------------------
+                # 
+                # * position vertex at lat = 0.0, long = 0.0, radius
+                # * transform position through lat and long rotation matrices
+                # 
+
+                vector = new THREE.Vector3 0.0, 0.0, radius
+                toLongitude.makeRotationY longitude * radianRatio
+                toLatitude.makeRotationX  -latitude * radianRatio
+                vector.applyMatrix4 toLatitude
+                vector.applyMatrix4 toLongitude
+                return vector
+
+            landMasses = []
+            for polygon in earth
+
+                material = new THREE.LineBasicMaterial color: 0xffffff
+                geometry = new THREE.Geometry
+                # i = 0
+                for vertex in polygon
+
+                    # #
+                    # # draw line from every 4th vertex only
+                    # # TODO: move this to server side if it stays
+                    # #
+                    # continue unless i++ % 4 is 0
+
+                    geometry.vertices.push transform vertex[0], vertex[1]
+
+                landMasses.push polygon = new THREE.Line geometry, material
+                scene.add polygon
+
+            onResize = ->
+
+                canvas.width = window.innerWidth
+                canvas.height = window.innerHeight
+                camera.aspect = canvas.width / canvas.height
+                camera.updateProjectionMatrix()
+                renderer.setSize canvas.width, canvas.height
+            
+            document.body.appendChild canvas
+            document.body.appendChild stats.domElement
+
+            onResize()
+
+            window.addEventListener 'resize', onResize
+
 
             animate = ->
 
                 stats.begin()
                 try requestAnimationFrame animate
+                
+                renderer.render scene, camera
+
+                for polygon in landMasses
+                    polygon.rotation.x += rotationX
+                    polygon.rotation.y += rotationY
+
                 stats.end()
 
             animate()
 
         (error) ->
+
+            console.log error: error
+
         (notify) ->
 
             progress.items[notify.index] = notify.value
