@@ -1,5 +1,5 @@
 
-require ['/js/three.min.js', '/js/stats.min.js'], ->
+require ['/js/q.min.js', '/js/three.min.js', '/js/stats.min.js'], (Q) ->
 
     stats = new Stats
     stats.setMode 0
@@ -30,6 +30,44 @@ require ['/js/three.min.js', '/js/stats.min.js'], ->
 
     canvas.style.width = '100%'
     canvas.style.height = '100%'
+
+
+    getResource = (url) ->
+
+        Q.Promise (resolve, reject, notify) ->
+
+            req = new XMLHttpRequest()
+
+            req.onload = (event) ->
+                if req.status != 200
+                    reject new Error 'failed to load ' + url
+
+            req.onerror = (event) ->
+                reject new Error 'failed to load ' + url
+
+            req.onprogress = (event) ->
+                if event.lengthComputable
+                    notify progress: [event.loaded, event.total]
+
+            req.onreadystatechange = (event) ->
+                if req.readyState == 4
+                    resolve JSON.parse req.responseText
+
+            req.open 'GET', url, true
+
+            req.send()
+
+    Q.all(
+
+        ['/earth', '/visitors'].map (url) -> getResource url
+
+    ).then(
+
+        ([earth, visitors]) -> console.log visitors
+        (error) ->
+        (notify) ->
+    )
+        
 
     animate = ->
 
