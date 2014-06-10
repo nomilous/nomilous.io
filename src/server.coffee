@@ -1,8 +1,6 @@
 {normalize} = require 'path'
 {Packager} = require 'cetera'
-{Visitor} = require './database'
 express = require 'express'
-geoip = require 'geoip-lite'
 
 app = express()
 
@@ -19,21 +17,10 @@ packager.mount
         'main.js'
     ]
 
+require('./root') app
+
 require('./earth') app
 
 require('./visitors') app
-
-
-app.get '/', (req, res) -> 
-
-    randomIP = -> 
-        random = -> Math.floor Math.random() * 254
-        "#{random()}.#{random()}.#{random()}.#{random()}"
-
-    ip = req.headers['x-real-ip']
-    ip ||= randomIP() unless process.env.NODE_ENV is 'production'
-    v = new Visitor location: geoip.lookup ip
-    v.save -> 
-        res.render 'index'
 
 app.listen process.env.WWW_PORT || 3000, 'localhost'
